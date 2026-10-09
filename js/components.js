@@ -93,7 +93,14 @@ function renderHeader() {
   const cartSummary = Store.getCartSummary();
   const wishlistCount = Store.getWishlist().length;
   const categories = Store.getCategories();
-  const currentPath = window.location.pathname;
+  const user = Store.getUser();
+  const isLoggedIn = user && user.isLoggedIn !== false;
+  const currentPath = window.location.pathname.toLowerCase();
+  const isHome = currentPath.endsWith("index.html") || currentPath.endsWith("/") || currentPath === "";
+  const isCategory = currentPath.includes("category.html");
+  const isRFQ = currentPath.includes("bulk-quote.html");
+  const isCart = currentPath.includes("cart.html");
+  const isOrders = currentPath.includes("orders.html") || currentPath.includes("account.html");
 
   const categoriesOptions = categories.map(c => 
     `<option value="${c.id}">${c.name}</option>`
@@ -112,11 +119,15 @@ function renderHeader() {
       <div class="container top-notice-content">
         <div class="top-notice-left">
           <span class="demo-pill-badge">${t("demoBadge")}</span>
-          <span>${t("topNotice")}</span>
+          <span class="notice-msg-text">${t("topNotice")}</span>
         </div>
         <div class="top-notice-right">
-          <span>${t("callHelp")}</span>
-          <button id="lang-switch-btn" class="lang-btn" onclick="toggleLanguage()">
+          <a href="tel:18004196334" class="call-desk-link" title="Call Bio-Desk Helpline: 1800-419-6334">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <span class="call-desk-text">${t("callHelp")}</span>
+            <span class="call-desk-short">1800-419-6334</span>
+          </a>
+          <button id="lang-switch-btn" class="lang-btn" onclick="toggleLanguage()" title="Change Language / भाषा बदलें">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
             <span>${currentLang === "en" ? "हिन्दी" : "English"}</span>
           </button>
@@ -127,20 +138,30 @@ function renderHeader() {
     <!-- Main Navigation Bar -->
     <header class="main-header">
       <div class="container header-inner">
-        <!-- Logo -->
-        <a href="index.html" class="brand-logo" title="MediKart - B2B Medical Equipment">
-          <div class="brand-icon">
-            <svg viewBox="0 0 24 24">
-              <path d="M19 10.5h-5.5V5a1.5 1.5 0 0 0-3 0v5.5H5a1.5 1.5 0 0 0 0 3h5.5V19a1.5 1.5 0 0 0 3 0v-5.5H19a1.5 1.5 0 0 0 0-3z"/>
+        <!-- Left: Mobile Hamburger & Brand Logo -->
+        <div class="header-left-cluster">
+          <button type="button" class="mobile-hamburger-btn" onclick="toggleMobileNav(true)" aria-label="Open Navigation Menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
-          </div>
-          <div class="brand-text">
-            <span class="brand-title">Medi<span>Kart</span></span>
-            <span class="brand-sub">Healthcare B2B</span>
-          </div>
-        </a>
+          </button>
 
-        <!-- Search Bar with Live Suggest & Category Selector -->
+          <a href="index.html" class="brand-logo" title="MediKart - B2B Medical Equipment">
+            <div class="brand-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M19 10.5h-5.5V5a1.5 1.5 0 0 0-3 0v5.5H5a1.5 1.5 0 0 0 0 3h5.5V19a1.5 1.5 0 0 0 3 0v-5.5H19a1.5 1.5 0 0 0 0-3z"/>
+              </svg>
+            </div>
+            <div class="brand-text">
+              <span class="brand-title">Medi<span>Kart</span></span>
+              <span class="brand-sub">Healthcare B2B</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- Desktop Search Bar with Category Selector -->
         <div class="header-search">
           <form class="search-form" id="global-search-form" onsubmit="handleSearchSubmit(event)">
             <select class="search-category-select" id="search-cat-select" aria-label="Search Category">
@@ -181,40 +202,59 @@ function renderHeader() {
 
         <!-- Header Actions -->
         <div class="header-actions">
-          <a href="bulk-quote.html" class="rfq-quick-btn" title="Request Bulk Pricing">
+          <a href="bulk-quote.html" class="rfq-quick-btn hide-on-mobile" title="Request Bulk Pricing">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span>${t("rfq")}</span>
+            <span class="action-label">${t("rfq")}</span>
           </a>
 
           <a href="wishlist.html" class="header-action-btn" title="Saved Wishlist">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-            <span>${t("wishlist")}</span>
+            <span class="action-label">${t("wishlist")}</span>
             <span class="badge-count" id="header-wishlist-count">${wishlistCount}</span>
           </a>
 
           <a href="cart.html" class="header-action-btn" title="Shopping Cart">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-            <span>${t("cart")}</span>
+            <span class="action-label">${t("cart")}</span>
             <span class="badge-count" id="header-cart-count">${cartSummary.itemCount}</span>
           </a>
 
-          <a href="account.html" class="header-action-btn" title="Doctor / Facility Account">
+          <a href="account.html" class="header-action-btn hide-on-mobile" title="${isLoggedIn ? ('Facility Account: ' + (user.name || 'Dr. Rajesh')) : 'Login to Facility Account'}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            <span>${t("account")}</span>
+            <span class="action-label">${isLoggedIn ? t("account") : 'Login'}</span>
           </a>
         </div>
       </div>
 
-      <!-- Sub Navigation Bar -->
+      <!-- Dedicated Mobile Search Row (Instant Access on Phone/Tablet) -->
+      <div class="mobile-search-bar-wrap">
+        <div class="container">
+          <form class="mobile-search-form" onsubmit="handleMobileSearchSubmit(event)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input 
+              type="text" 
+              id="mobile-search-input" 
+              class="mobile-search-input" 
+              placeholder="${t("searchPlaceholder")}" 
+              autocomplete="off"
+            />
+            <button type="submit" class="mobile-search-btn" aria-label="Search">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Sub Navigation Bar (Smooth scrollable pills on mobile) -->
       <nav class="sub-navbar">
         <div class="container sub-nav-inner">
           <div class="nav-links-left">
-            <div class="all-categories-trigger">
+            <div class="all-categories-trigger" onclick="toggleMobileNav(true)">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
               <span>${t("allCategories")}</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
 
-              <!-- Mega Dropdown -->
+              <!-- Mega Dropdown (Desktop) -->
               <div class="mega-menu-overlay">
                 <div class="mega-menu-list">
                   ${megaMenuItems}
@@ -240,6 +280,130 @@ function renderHeader() {
         </div>
       </nav>
     </header>
+
+    <!-- Mobile Navigation Drawer Backdrop & Panel -->
+    <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" onclick="toggleMobileNav(false)"></div>
+    <aside id="mobile-nav-drawer" class="mobile-nav-drawer" aria-label="Mobile Navigation">
+      <div class="drawer-header">
+        <div class="brand-logo" style="gap: 8px;">
+          <div class="brand-icon" style="width: 34px; height: 34px;">
+            <svg viewBox="0 0 24 24" style="width: 20px; height: 20px;"><path d="M19 10.5h-5.5V5a1.5 1.5 0 0 0-3 0v5.5H5a1.5 1.5 0 0 0 0 3h5.5V19a1.5 1.5 0 0 0 3 0v-5.5H19a1.5 1.5 0 0 0 0-3z"/></svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title" style="font-size: 1.15rem;">Medi<span>Kart</span></span>
+            <span class="brand-sub" style="font-size: 0.65rem;">Healthcare B2B</span>
+          </div>
+        </div>
+        <button type="button" class="btn-close-drawer" onclick="toggleMobileNav(false)" aria-label="Close Menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="drawer-user-strip">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+          <div class="verified-facility-pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <span>${isLoggedIn ? (user.name || "Dr. Rajesh K. Nair") : "Guest User"}</span>
+          </div>
+          ${isLoggedIn ? `
+            <button type="button" onclick="handleGlobalLogout(); toggleMobileNav(false);" style="background: #FFF1F2; color: #E11D48; border: 1px solid #FECDD3; border-radius: 6px; padding: 4px 10px; font-size: 0.72rem; font-weight: 700; cursor: pointer;">
+              Log Out
+            </button>
+          ` : `
+            <a href="account.html" onclick="toggleMobileNav(false);" style="background: var(--primary-soft); color: var(--primary); border-radius: 6px; padding: 4px 10px; font-size: 0.72rem; font-weight: 700;">
+              Log In
+            </a>
+          `}
+        </div>
+      </div>
+
+      <div class="drawer-body">
+        <div class="drawer-section-title">Medical Specialities (${categories.length})</div>
+        <div class="drawer-cat-list">
+          ${categories.map(c => `
+            <a href="category.html?cat=${c.id}" class="drawer-cat-item" onclick="toggleMobileNav(false)">
+              <span>${c.name}</span>
+              <span class="drawer-cat-count">${c.count} items</span>
+            </a>
+          `).join("")}
+        </div>
+
+        <div class="drawer-section-title" style="margin-top: 20px;">Institutional Services</div>
+        <div class="drawer-nav-links">
+          <a href="bulk-quote.html" class="drawer-nav-item" onclick="toggleMobileNav(false)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span>${t("rfq")}</span>
+          </a>
+          <a href="deals.html" class="drawer-nav-item" onclick="toggleMobileNav(false)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <span>${t("deals")}</span>
+          </a>
+          <a href="brands.html" class="drawer-nav-item" onclick="toggleMobileNav(false)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            <span>${t("brands")}</span>
+          </a>
+          <a href="orders.html" class="drawer-nav-item" onclick="toggleMobileNav(false)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>${t("orders")}</span>
+          </a>
+          <a href="account.html" class="drawer-nav-item" onclick="toggleMobileNav(false)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span>${t("account")}</span>
+          </a>
+          ${isLoggedIn ? `
+          <button type="button" class="drawer-nav-item" style="width: 100%; border: none; background: transparent; cursor: pointer; color: #E11D48; text-align: left;" onclick="handleGlobalLogout(); toggleMobileNav(false);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E11D48" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span style="color: #E11D48; font-weight: 700;">Log Out / Sign Out</span>
+          </button>
+          ` : `
+          <a href="account.html" class="drawer-nav-item" style="color: var(--primary);" onclick="toggleMobileNav(false)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+            <span style="font-weight: 700;">Log In to Account</span>
+          </a>
+          `}
+          <a href="help.html" class="drawer-nav-item" onclick="toggleMobileNav(false)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            <span>${t("help")}</span>
+          </a>
+        </div>
+
+        <div class="drawer-footer-actions">
+          <button class="drawer-lang-btn" onclick="toggleLanguage(); toggleMobileNav(false);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span>${currentLang === "en" ? "हिन्दी में बदलें" : "Switch to English"}</span>
+          </button>
+          <a href="tel:18004196334" class="drawer-call-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <span>Call Bio-Desk: 1800-419-6334</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Mobile Bottom Navigation Bar (Fixed for phones & tablets) -->
+    <nav class="mobile-bottom-nav" aria-label="Bottom Navigation">
+      <a href="index.html" class="mobile-nav-item ${isHome ? 'active' : ''}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Home</span>
+      </a>
+      <a href="category.html" class="mobile-nav-item ${isCategory ? 'active' : ''}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        <span>Catalogue</span>
+      </a>
+      <a href="bulk-quote.html" class="mobile-nav-item ${isRFQ ? 'active' : ''}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        <span>RFQ Quote</span>
+      </a>
+      <a href="cart.html" class="mobile-nav-item ${isCart ? 'active' : ''}" style="position: relative;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        <span>Cart</span>
+        <span class="badge-count" id="mobile-bottom-cart-count">${cartSummary.itemCount}</span>
+      </a>
+      <a href="orders.html" class="mobile-nav-item ${isOrders ? 'active' : ''}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <span>Orders</span>
+      </a>
+    </nav>
   `;
 
   // Update recent searches
@@ -457,6 +621,35 @@ function handleSearchSubmit(event) {
   window.location.href = targetUrl;
 }
 
+function handleMobileSearchSubmit(event) {
+  if (event) event.preventDefault();
+  const input = document.getElementById("mobile-search-input");
+  if (!input) return;
+
+  const query = input.value.trim();
+  if (query) {
+    Store.addRecentSearch(query);
+  }
+
+  window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+}
+
+// Mobile Navigation Drawer Controller
+function toggleMobileNav(open) {
+  const drawer = document.getElementById("mobile-nav-drawer");
+  const backdrop = document.getElementById("mobile-nav-backdrop");
+  if (!drawer || !backdrop) return;
+  if (open) {
+    drawer.classList.add("open");
+    backdrop.classList.add("active");
+    document.body.style.overflow = "hidden";
+  } else {
+    drawer.classList.remove("open");
+    backdrop.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+}
+
 // Language Switcher
 function toggleLanguage() {
   const current = Store.getLanguage();
@@ -473,6 +666,9 @@ window.addEventListener("medikart_store_updated", (e) => {
 
   const cartEl = document.getElementById("header-cart-count");
   if (cartEl) cartEl.textContent = cartSummary.itemCount;
+
+  const mobCartEl = document.getElementById("mobile-bottom-cart-count");
+  if (mobCartEl) mobCartEl.textContent = cartSummary.itemCount;
 
   const wishEl = document.getElementById("header-wishlist-count");
   if (wishEl) wishEl.textContent = wishlistCount;
@@ -564,8 +760,22 @@ function handleWishlistToggle(productId, event) {
   showToast(added ? "Saved to Wishlist" : "Removed from Wishlist", added ? "success" : "warning");
 }
 
+function handleGlobalLogout() {
+  Store.logout();
+  showToast("You have been logged out successfully.", "info");
+  renderHeader();
+  if (window.location.pathname.includes("account.html")) {
+    if (typeof updateAuthState === "function") {
+      updateAuthState();
+    } else {
+      window.location.reload();
+    }
+  }
+}
+
 // Auto-run Header & Footer initialization when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
   renderHeader();
   renderFooter();
 });
+

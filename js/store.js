@@ -460,6 +460,34 @@ const Store = {
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData));
     this.emitChange("user");
   },
+  logout() {
+    const user = this.getUser();
+    user.isLoggedIn = false;
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+    this.emitChange("user");
+  },
+  login(userData) {
+    let current = this.getUser();
+    if (!current.name) {
+      current = {
+        name: "Dr. Rajesh K. Nair",
+        email: "dr.rajesh@medicityhospital.com",
+        phone: "+91 98450 12345",
+        hospital: "Medicity Multispecialty Hospital & Research Institute",
+        gstin: "29AABCM1234D1Z2",
+        address: "Survey No. 42, Outer Ring Road, Bellandur",
+        city: "Bengaluru",
+        state: "Karnataka",
+        pincode: "560103"
+      };
+    }
+    if (userData) {
+      Object.assign(current, userData);
+    }
+    current.isLoggedIn = true;
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(current));
+    this.emitChange("user");
+  },
 
   // RECENT SEARCHES
   getRecentSearches() {

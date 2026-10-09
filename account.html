@@ -25,14 +25,14 @@
 
   <main class="container" style="padding-bottom: 60px;">
     <!-- Demo Credentials Helper Banner -->
-    <div style="background: #FEF3C7; border: 1.5px solid #F59E0B; border-radius: 14px; padding: 14px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div id="account-demo-banner" style="background: #FEF3C7; border: 1.5px solid #F59E0B; border-radius: 14px; padding: 14px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
       <div style="display: flex; align-items: center; gap: 10px;">
         <span style="background: #F59E0B; color: #fff; font-size: 0.75rem; font-weight: 800; padding: 2px 8px; border-radius: 4px;">DEMO CREDENTIALS</span>
-        <span style="font-size: 0.85rem; color: #92400E;">
+        <span id="account-banner-text" style="font-size: 0.85rem; color: #92400E;">
           Logged in as verified healthcare practitioner: <strong>Dr. Rajesh K. Nair</strong> (Medicity Hospital, Bengaluru).
         </span>
       </div>
-      <div style="font-size: 0.82rem; color: #92400E;">
+      <div id="account-banner-right" style="font-size: 0.82rem; color: #92400E;">
         Switch profile below or test order placements without payment gateway.
       </div>
     </div>
@@ -41,7 +41,7 @@
       <!-- Left: Account Navigation Sidebar -->
       <aside style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 24px; height: fit-content; box-shadow: var(--shadow-sm);">
         <div style="text-align: center; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); margin-bottom: 16px;">
-          <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
+          <div id="sidebar-avatar" style="width: 64px; height: 64px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
             RN
           </div>
           <h3 id="sidebar-user-name" style="font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">
@@ -50,7 +50,7 @@
           <p id="sidebar-user-hosp" style="font-size: 0.78rem; color: #64748B;">
             Medicity Multispecialty Hospital
           </p>
-          <span style="display: inline-block; background: #ECFDF5; color: #065F46; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-top: 6px;">
+          <span id="sidebar-status-badge" style="display: inline-block; background: #ECFDF5; color: #065F46; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-top: 6px;">
             ✓ GST Verified Facility
           </span>
         </div>
@@ -72,15 +72,44 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
             Bulk RFQ Inquiries
           </a>
+
+          <div style="border-top: 1px solid var(--border-color); margin: 8px 0;"></div>
+
+          <!-- Log Out Button -->
+          <button type="button" class="btn-account-logout" id="sidebar-logout-btn" onclick="handleAccountLogout()" title="Sign out of this session">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span>Log Out / Sign Out</span>
+          </button>
         </nav>
       </aside>
 
-      <!-- Right: Profile Form & Saved Details -->
+      <!-- Right: Main Content (Logged In Profile OR Logged Out Login Portal) -->
       <div>
-        <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 32px; box-shadow: var(--shadow-sm);">
-          <h2 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 20px;">
-            Facility Procurement Profile
-          </h2>
+        <!-- 1. Logged In View -->
+        <div id="account-logged-in-view" style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 32px; box-shadow: var(--shadow-sm);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-light);">
+            <div>
+              <h2 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin: 0 0 4px 0;">
+                Facility Procurement Profile
+              </h2>
+              <p style="font-size: 0.85rem; color: #64748B; margin: 0;">
+                Verified GSTIN credentials and institutional delivery address.
+              </p>
+            </div>
+            <!-- Header Logout Button -->
+            <button type="button" class="btn-profile-logout-header" onclick="handleAccountLogout()" title="Log out from account">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span>Log Out</span>
+            </button>
+          </div>
 
           <form id="profile-update-form" onsubmit="handleProfileSave(event)">
             <div class="form-row-2">
@@ -132,10 +161,53 @@
               <input type="text" id="prof-pincode" class="form-control" maxlength="6" required/>
             </div>
 
-            <button type="submit" class="btn-primary" style="margin-top: 10px;">
-              Save Profile Changes
+            <div style="display: flex; align-items: center; gap: 14px; margin-top: 20px; flex-wrap: wrap;">
+              <button type="submit" class="btn-primary">
+                Save Profile Changes
+              </button>
+              <button type="button" class="btn-profile-logout-header" onclick="handleAccountLogout()">
+                Log Out
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- 2. Logged Out View (Clean sign-in card) -->
+        <div id="account-logged-out-view" style="display: none; background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 44px 32px; box-shadow: var(--shadow-sm); text-align: center; max-width: 520px; margin: 0 auto;">
+          <div style="width: 68px; height: 68px; border-radius: 50%; background: #FFF1F2; color: #E11D48; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; border: 1px solid #FECDD3;">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </div>
+          <h2 style="font-family: var(--font-heading); font-size: 1.45rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
+            You Are Logged Out
+          </h2>
+          <p style="font-size: 0.9rem; color: #64748B; margin-bottom: 24px; line-height: 1.5;">
+            You have successfully signed out of MediKart. Log back in to access institutional pricing, GST tax invoices, and tracked dispatches.
+          </p>
+
+          <form onsubmit="handleAccountLogin(event)" style="text-align: left; margin-bottom: 22px;">
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label">Hospital Work Email</label>
+              <input type="email" id="login-email-input" class="form-control" value="dr.rajesh@medicityhospital.com" required/>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+              <label class="form-label">Password</label>
+              <input type="password" id="login-pass-input" class="form-control" value="••••••••••••" required/>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-weight: 700; font-size: 0.95rem;">
+              Log In to Hospital Account
             </button>
           </form>
+
+          <div style="padding-top: 18px; border-top: 1px solid var(--border-light); font-size: 0.86rem; color: #64748B;">
+            Testing as Demo User? 
+            <button type="button" onclick="handleQuickDemoLogin()" style="color: var(--primary); font-weight: 700; text-decoration: underline; background: none; border: none; cursor: pointer; padding: 0 4px;">
+              1-Click Demo Login as Dr. Rajesh
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -150,13 +222,114 @@
   <script src="js/components.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      loadProfileFields();
+      updateAuthState();
     });
 
-    function loadProfileFields() {
-      const u = Store.getUser();
-      if (!u) return;
+    // Listen for store updates
+    window.addEventListener("medikart_store_updated", (e) => {
+      if (e.detail && e.detail.key === "user") {
+        updateAuthState();
+      }
+    });
 
+    function updateAuthState() {
+      const u = Store.getUser();
+      const isLoggedIn = u && u.isLoggedIn !== false;
+
+      const loggedInView = document.getElementById("account-logged-in-view");
+      const loggedOutView = document.getElementById("account-logged-out-view");
+      const sidebarLogoutBtn = document.getElementById("sidebar-logout-btn");
+      const sidebarName = document.getElementById("sidebar-user-name");
+      const sidebarHosp = document.getElementById("sidebar-user-hosp");
+      const sidebarBadge = document.getElementById("sidebar-status-badge");
+      const sidebarAvatar = document.getElementById("sidebar-avatar");
+      const bannerText = document.getElementById("account-banner-text");
+      const bannerRight = document.getElementById("account-banner-right");
+
+      if (isLoggedIn) {
+        // Show Logged-in profile view
+        if (loggedInView) loggedInView.style.display = "block";
+        if (loggedOutView) loggedOutView.style.display = "none";
+
+        if (sidebarLogoutBtn) {
+          sidebarLogoutBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span>Log Out / Sign Out</span>
+          `;
+          sidebarLogoutBtn.onclick = handleAccountLogout;
+          sidebarLogoutBtn.className = "btn-account-logout";
+        }
+
+        if (sidebarName) sidebarName.textContent = u.name || "Dr. Rajesh K. Nair";
+        if (sidebarHosp) sidebarHosp.textContent = u.hospital || "Medicity Multispecialty Hospital";
+        if (sidebarBadge) {
+          sidebarBadge.textContent = "✓ GST Verified Facility";
+          sidebarBadge.style.background = "#ECFDF5";
+          sidebarBadge.style.color = "#065F46";
+        }
+        if (sidebarAvatar) {
+          sidebarAvatar.textContent = "RN";
+          sidebarAvatar.style.background = "var(--primary-soft)";
+          sidebarAvatar.style.color = "var(--primary)";
+        }
+
+        if (bannerText) {
+          bannerText.innerHTML = `Logged in as verified healthcare practitioner: <strong>${u.name || 'Dr. Rajesh K. Nair'}</strong> (${u.hospital || 'Medicity Hospital, Bengaluru'}).`;
+        }
+        if (bannerRight) {
+          bannerRight.textContent = "Switch profile below or test order placements without payment gateway.";
+        }
+
+        loadProfileFields(u);
+      } else {
+        // Show Logged-out login view
+        if (loggedInView) loggedInView.style.display = "none";
+        if (loggedOutView) loggedOutView.style.display = "block";
+
+        if (sidebarLogoutBtn) {
+          sidebarLogoutBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+            <span>Log In to Account</span>
+          `;
+          sidebarLogoutBtn.onclick = handleQuickDemoLogin;
+          sidebarLogoutBtn.className = "btn-account-logout";
+          sidebarLogoutBtn.style.background = "var(--primary-soft)";
+          sidebarLogoutBtn.style.color = "var(--primary)";
+          sidebarLogoutBtn.style.borderColor = "var(--primary-soft)";
+        }
+
+        if (sidebarName) sidebarName.textContent = "Signed Out";
+        if (sidebarHosp) sidebarHosp.textContent = "No Active Session";
+        if (sidebarBadge) {
+          sidebarBadge.textContent = "Guest Mode";
+          sidebarBadge.style.background = "#F1F5F9";
+          sidebarBadge.style.color = "#64748B";
+        }
+        if (sidebarAvatar) {
+          sidebarAvatar.innerHTML = `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
+          sidebarAvatar.style.background = "#F1F5F9";
+          sidebarAvatar.style.color = "#64748B";
+        }
+
+        if (bannerText) {
+          bannerText.innerHTML = `You are currently <strong>Logged Out</strong>. Sign in below to access institutional pricing and order records.`;
+        }
+        if (bannerRight) {
+          bannerRight.innerHTML = `<button onclick="handleQuickDemoLogin()" style="color: #92400E; font-weight: 700; text-decoration: underline; background: none; border: none; cursor: pointer;">1-Click Demo Login</button>`;
+        }
+      }
+    }
+
+    function loadProfileFields(u) {
+      if (!u) return;
       document.getElementById("prof-name").value = u.name || "";
       document.getElementById("prof-hospital").value = u.hospital || "";
       document.getElementById("prof-email").value = u.email || "";
@@ -166,9 +339,26 @@
       document.getElementById("prof-city").value = u.city || "";
       document.getElementById("prof-state").value = u.state || "";
       document.getElementById("prof-pincode").value = u.pincode || "";
+    }
 
-      document.getElementById("sidebar-user-name").textContent = u.name || "Practitioner";
-      document.getElementById("sidebar-user-hosp").textContent = u.hospital || "Medical Facility";
+    function handleAccountLogout() {
+      Store.logout();
+      showToast("You have been logged out successfully.", "info");
+      updateAuthState();
+    }
+
+    function handleAccountLogin(e) {
+      if (e) e.preventDefault();
+      const email = document.getElementById("login-email-input") ? document.getElementById("login-email-input").value.trim() : "";
+      Store.login({ email: email || "dr.rajesh@medicityhospital.com" });
+      showToast("Welcome back! Successfully logged into your facility account.", "success");
+      updateAuthState();
+    }
+
+    function handleQuickDemoLogin() {
+      Store.login();
+      showToast("Logged in as Dr. Rajesh K. Nair (Medicity Multispecialty Hospital)", "success");
+      updateAuthState();
     }
 
     function handleProfileSave(e) {
@@ -188,7 +378,7 @@
       };
 
       Store.saveUser(user);
-      loadProfileFields();
+      updateAuthState();
       showToast("Facility profile and GSTIN updated successfully!", "success");
     }
   </script>
