@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Checkout & GST Invoicing - MediKart B2B</title>
+  <meta name="description" content="Secure hospital checkout with GSTIN invoice generation and demo corporate payment processing on MediKart.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header Mount -->
+  <div id="header-mount"></div>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb-container">
+    <div class="container">
+      <ul class="breadcrumb-list">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li class="breadcrumb-item"><a href="cart.html">Cart</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li class="breadcrumb-item active">Checkout & Invoicing</li>
+      </ul>
+    </div>
+  </div>
+
+  <main class="container">
+    <h1 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin-bottom: 24px;">
+      Hospital Procurement Checkout
+    </h1>
+
+    <div class="checkout-grid" id="checkout-main-grid">
+      <!-- Left Column: Checkout Forms -->
+      <div>
+        <form id="checkout-form" onsubmit="handlePlaceOrder(event)">
+          <!-- Step 1: Hospital Facility & Contact Details -->
+          <div class="checkout-step-card">
+            <h3 class="checkout-step-title">
+              <span class="step-number-bubble">1</span>
+              <span>Healthcare Institution & Primary Contact</span>
+            </h3>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Contact Person / Doctor Name *</label>
+                <input type="text" id="cust-name" class="form-control" required placeholder="e.g. Dr. Rajesh Nair"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Hospital / Clinic / Diagnostic Center *</label>
+                <input type="text" id="cust-hospital" class="form-control" required placeholder="e.g. Medicity Multispecialty Hospital"/>
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Work Email for Tax Invoice *</label>
+                <input type="email" id="cust-email" class="form-control" required placeholder="procurement@hospital.com"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mobile Number (Delivery SMS updates) *</label>
+                <input type="tel" id="cust-phone" class="form-control" required placeholder="+91 98450 12345"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Shipping & Delivery Address -->
+          <div class="checkout-step-card">
+            <h3 class="checkout-step-title">
+              <span class="step-number-bubble">2</span>
+              <span>Delivery Facility Address</span>
+            </h3>
+
+            <div class="form-group">
+              <label class="form-label">Street Address & Department / Ward Room *</label>
+              <input type="text" id="cust-address" class="form-control" required placeholder="Survey No. 42, Outer Ring Road, Biomedical Stores"/>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">City *</label>
+                <input type="text" id="cust-city" class="form-control" required placeholder="Bengaluru"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">State *</label>
+                <select id="cust-state" class="form-control" required>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Delhi NCR">Delhi NCR</option>
+                  <option value="Tamil Nadu">Tamil Nadu</option>
+                  <option value="Telangana">Telangana</option>
+                  <option value="Gujarat">Gujarat</option>
+                  <option value="Kerala">Kerala</option>
+                  <option value="West Bengal">West Bengal</option>
+                  <option value="Rajasthan">Rajasthan</option>
+                  <option value="Uttar Pradesh">Uttar Pradesh</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Delivery Pincode *</label>
+                <input type="text" id="cust-pincode" class="form-control" required maxlength="6" placeholder="560103"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Order Notes / Unloading Instructions</label>
+                <input type="text" id="cust-notes" class="form-control" placeholder="Deliver to OT ground floor receiving bay"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: B2B GST Invoicing & Tax Details -->
+          <div class="checkout-step-card">
+            <h3 class="checkout-step-title">
+              <span class="step-number-bubble">3</span>
+              <span>B2B GST Details (For 18% Input Tax Credit)</span>
+            </h3>
+
+            <div class="b2b-gst-toggle-card">
+              <div style="font-size: 0.84rem; font-weight: 700; color: var(--primary); margin-bottom: 6px;">
+                Enter GSTIN for Official Tax Invoice
+              </div>
+              <p style="font-size: 0.78rem; color: #475569; margin-bottom: 12px;">
+                Your GSTIN will be verified and mapped on the generated B2B tax invoice enabling your hospital or clinic to claim 100% of the 18% GST as Input Tax Credit (ITC).
+              </p>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">15-Digit Hospital GSTIN</label>
+                <input type="text" id="cust-gstin" class="form-control" placeholder="e.g. 29AABCM1234D1Z2" maxlength="15" style="text-transform: uppercase; font-family: var(--font-mono); font-weight: 600;"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4: Demo Payment Selection -->
+          <div class="checkout-step-card">
+            <h3 class="checkout-step-title">
+              <span class="step-number-bubble">4</span>
+              <span>Payment Mode (Demo Gateway)</span>
+            </h3>
+
+            <div class="payment-method-selector">
+              <label class="payment-radio-item selected">
+                <input type="radio" name="pay-method" value="Corporate Net Banking" checked/>
+                <div>
+                  <strong style="display: block; font-size: 0.9rem;">Corporate Net Banking (HDFC / ICICI / SBI)</strong>
+                  <span style="font-size: 0.76rem; color: #64748B;">Instant bank transfer for institutional procurement</span>
+                </div>
+              </label>
+
+              <label class="payment-radio-item">
+                <input type="radio" name="pay-method" value="UPI / QR Code"/>
+                <div>
+                  <strong style="display: block; font-size: 0.9rem;">UPI / Instant QR Payment</strong>
+                  <span style="font-size: 0.76rem; color: #64748B;">Pay via PhonePe, Google Pay, BHIM or Paytm</span>
+                </div>
+              </label>
+
+              <label class="payment-radio-item">
+                <input type="radio" name="pay-method" value="Corporate Credit / Purchasing Card"/>
+                <div>
+                  <strong style="display: block; font-size: 0.9rem;">Corporate Visa / Mastercard Purchasing Card</strong>
+                  <span style="font-size: 0.76rem; color: #64748B;">Direct hospital card billing with 0% extra surcharge</span>
+                </div>
+              </label>
+
+              <label class="payment-radio-item">
+                <input type="radio" name="pay-method" value="Cash on Delivery / Onsite PO"/>
+                <div>
+                  <strong style="display: block; font-size: 0.9rem;">Pay on Delivery / Hospital PO Verification</strong>
+                  <span style="font-size: 0.76rem; color: #64748B;">Inspect calibration seal upon delivery, pay via demand draft</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-checkout-proceed" style="margin-bottom: 24px;">
+            <span>Authorize & Place Demo Order</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- Right Column: Live Order Summary -->
+      <div>
+        <div class="cart-summary-card" style="position: sticky; top: 90px;">
+          <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 14px;">
+            Order Review
+          </h3>
+
+          <div id="checkout-items-mini-list" style="max-height: 220px; overflow-y: auto; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+            <!-- Populated by JS -->
+          </div>
+
+          <div class="bill-row">
+            <span>Total Units</span>
+            <strong id="chk-item-count">0</strong>
+          </div>
+          <div class="bill-row">
+            <span>Gross Value</span>
+            <span class="tabular-nums" id="chk-gross">₹0</span>
+          </div>
+          <div class="bill-row" id="chk-bulk-row" style="color: var(--success); display: none;">
+            <span>Volume Slab Savings</span>
+            <span class="tabular-nums" id="chk-bulk-savings">-₹0</span>
+          </div>
+          <div class="bill-row">
+            <span>Taxable Base</span>
+            <span class="tabular-nums" id="chk-taxable">₹0</span>
+          </div>
+          <div class="bill-row" style="color: var(--primary); font-weight: 600;">
+            <span>GST (18%)</span>
+            <span class="tabular-nums" id="chk-gst">₹0</span>
+          </div>
+          <div class="bill-row">
+            <span>Insured Shipping</span>
+            <span style="color: var(--success); font-weight: 700;">FREE</span>
+          </div>
+
+          <div class="bill-row total">
+            <span>Total Amount</span>
+            <span class="tabular-nums" id="chk-total" style="color: var(--primary); font-size: 1.3rem;">₹0</span>
+          </div>
+
+          <div style="background: #F8FAF9; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 0.74rem; color: #475569;">
+            🔒 <strong>Demo Transaction Mode:</strong> No real money will be charged. Clicking Place Order will record the transaction in browser storage and generate your official printable GST Tax Invoice.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Mount -->
+  <div id="footer-mount"></div>
+
+  <!-- Scripts -->
+  <script src="js/products-data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const cart = Store.getCart();
+      if (cart.length === 0) {
+        window.location.href = "cart.html";
+        return;
+      }
+
+      prefillUserData();
+      renderCheckoutSummary();
+    });
+
+    function prefillUserData() {
+      const u = Store.getUser();
+      if (!u) return;
+
+      if (u.name) document.getElementById("cust-name").value = u.name;
+      if (u.hospital) document.getElementById("cust-hospital").value = u.hospital;
+      if (u.email) document.getElementById("cust-email").value = u.email;
+      if (u.phone) document.getElementById("cust-phone").value = u.phone;
+      if (u.address) document.getElementById("cust-address").value = u.address;
+      if (u.city) document.getElementById("cust-city").value = u.city;
+      if (u.state) document.getElementById("cust-state").value = u.state;
+      if (u.pincode) document.getElementById("cust-pincode").value = u.pincode;
+      if (u.gstin) document.getElementById("cust-gstin").value = u.gstin;
+    }
+
+    function renderCheckoutSummary() {
+      const cart = Store.getCart();
+      const summary = Store.getCartSummary("");
+
+      const miniList = document.getElementById("checkout-items-mini-list");
+      miniList.innerHTML = cart.map(item => `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.8rem;">
+          <div style="max-width: 65%;">
+            <strong style="color: var(--text-main); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.name}</strong>
+            <span style="color: #64748B;">Qty: ${item.quantity} × ${formatINR(item.price)}</span>
+          </div>
+          <span style="font-weight: 700; color: var(--text-main);">${formatINR(item.price * item.quantity)}</span>
+        </div>
+      `).join("");
+
+      document.getElementById("chk-item-count").textContent = summary.itemCount;
+      document.getElementById("chk-gross").textContent = formatINR(summary.grossSubtotal);
+      
+      if (summary.bulkSavings > 0) {
+        document.getElementById("chk-bulk-row").style.display = "flex";
+        document.getElementById("chk-bulk-savings").textContent = `- ${formatINR(summary.bulkSavings)}`;
+      }
+
+      document.getElementById("chk-taxable").textContent = formatINR(summary.taxableAmount);
+      document.getElementById("chk-gst").textContent = `+ ${formatINR(summary.gst)}`;
+      document.getElementById("chk-total").textContent = formatINR(summary.total);
+    }
+
+    function handlePlaceOrder(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("cust-name").value.trim();
+      const hospital = document.getElementById("cust-hospital").value.trim();
+      const email = document.getElementById("cust-email").value.trim();
+      const phone = document.getElementById("cust-phone").value.trim();
+      const address = document.getElementById("cust-address").value.trim();
+      const city = document.getElementById("cust-city").value.trim();
+      const state = document.getElementById("cust-state").value;
+      const pincode = document.getElementById("cust-pincode").value.trim();
+      const gstin = document.getElementById("cust-gstin").value.trim();
+      const notes = document.getElementById("cust-notes").value.trim();
+      const paymentMethod = document.querySelector("input[name='pay-method']:checked").value;
+
+      // Save user profile for future checkouts
+      Store.saveUser({
+        name,
+        hospital,
+        email,
+        phone,
+        address,
+        city,
+        state,
+        pincode,
+        gstin,
+        isLoggedIn: true
+      });
+
+      const cart = Store.getCart();
+      const summary = Store.getCartSummary("");
+
+      const orderData = {
+        items: cart,
+        subtotal: summary.grossSubtotal,
+        bulkSavings: summary.bulkSavings,
+        gst: summary.gst,
+        cgst: summary.cgst,
+        sgst: summary.sgst,
+        taxableAmount: summary.taxableAmount,
+        total: summary.total,
+        paymentMethod,
+        notes,
+        shippingAddress: {
+          name,
+          hospital,
+          email,
+          phone,
+          address: `${address}, ${city}, ${state} - ${pincode}`,
+          gstin: gstin || "Unregistered / B2C"
+        }
+      };
+
+      const placedOrder = Store.createOrder(orderData);
+      showToast(`Order #${placedOrder.id} successfully created!`, "success");
+
+      setTimeout(() => {
+        window.location.href = `success.html?orderId=${placedOrder.id}`;
+      }, 500);
+    }
+  </script>
+</body>
+</html>

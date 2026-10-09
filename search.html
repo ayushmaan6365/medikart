@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Medical Equipment - MediKart B2B</title>
+  <meta name="description" content="Search verified medical devices, patient monitors, surgical lights, diagnostic equipment and consumables on MediKart.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header Mount -->
+  <div id="header-mount"></div>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb-container">
+    <div class="container">
+      <ul class="breadcrumb-list">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li class="breadcrumb-item active">Search Catalogue</li>
+      </ul>
+    </div>
+  </div>
+
+  <main class="container">
+    <div style="margin-bottom: 20px;">
+      <h1 style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--text-main);">
+        Search Results for <span style="color: var(--primary);" id="search-query-heading">""</span>
+      </h1>
+      <p style="font-size: 0.86rem; color: #64748B;" id="search-sub-info">Searching across 45+ verified medical instruments and consumables</p>
+    </div>
+
+    <!-- Main Layout: Filters + Product Grid -->
+    <div class="plp-layout">
+      <!-- Filter Sidebar -->
+      <aside class="filter-sidebar">
+        <div class="filter-header">
+          <h3>Refine Results</h3>
+          <span class="btn-clear-filters" onclick="resetSearchFilters()">Reset</span>
+        </div>
+
+        <!-- Filter: Brand -->
+        <div class="filter-group">
+          <div class="filter-group-title">
+            <span>Brand / Maker</span>
+          </div>
+          <div class="filter-options-list" id="search-brands-filter">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Filter: Price Range -->
+        <div class="filter-group">
+          <div class="filter-group-title">
+            <span>Price Range (INR)</span>
+          </div>
+          <div class="price-range-inputs">
+            <input type="number" id="search-min-price" class="price-input" placeholder="Min ₹" onchange="runSearch()"/>
+            <span style="color: #94A3B8;">-</span>
+            <input type="number" id="search-max-price" class="price-input" placeholder="Max ₹" onchange="runSearch()"/>
+          </div>
+        </div>
+
+        <!-- Filter: Rating -->
+        <div class="filter-group">
+          <div class="filter-group-title">
+            <span>Minimum Rating</span>
+          </div>
+          <div class="filter-options-list">
+            <label class="filter-checkbox-label">
+              <input type="radio" name="search-rating" value="4.5" onchange="runSearch()"> 4.5★ & Above
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="radio" name="search-rating" value="4.0" onchange="runSearch()"> 4.0★ & Above
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="radio" name="search-rating" value="0" checked onchange="runSearch()"> Any Rating
+            </label>
+          </div>
+        </div>
+
+        <!-- Filter: In-Stock -->
+        <div class="filter-group">
+          <label class="filter-checkbox-label">
+            <input type="checkbox" id="search-in-stock" checked onchange="runSearch()"> In-Stock Hospital Ready
+          </label>
+        </div>
+      </aside>
+
+      <!-- Products Grid & Toolbar Area -->
+      <section class="plp-main-content">
+        <div class="plp-toolbar">
+          <div class="plp-result-count">
+            Found <strong id="search-count-display">0</strong> matching products
+          </div>
+          <div class="plp-sort-wrapper">
+            <label for="search-sort-select" class="plp-sort-label">Sort:</label>
+            <select id="search-sort-select" class="plp-sort-select" onchange="runSearch()">
+              <option value="popularity">Relevance</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="rating">Rating: High to Low</option>
+              <option value="discount">Discount %</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="product-grid-3" id="search-products-grid">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer Mount -->
+  <div id="footer-mount"></div>
+
+  <!-- Scripts -->
+  <script src="js/products-data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    let rawQuery = "";
+    let initialCat = "";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      rawQuery = urlParams.get("q") || "";
+      initialCat = urlParams.get("cat") || "";
+
+      document.getElementById("search-query-heading").textContent = rawQuery ? `"${rawQuery}"` : "All Products";
+      populateSearchBrands();
+      runSearch();
+    });
+
+    function populateSearchBrands() {
+      const brandContainer = document.getElementById("search-brands-filter");
+      if (!brandContainer) return;
+      const brands = Store.getBrands();
+      brandContainer.innerHTML = brands.map(b => `
+        <label class="filter-checkbox-label">
+          <input type="checkbox" name="search-brand-cb" value="${b.name}" onchange="runSearch()"/>
+          <span>${b.name}</span>
+        </label>
+      `).join("");
+    }
+
+    function runSearch() {
+      let products = Store.getProducts();
+      const q = rawQuery.toLowerCase().trim();
+
+      if (q) {
+        products = products.filter(p => 
+          p.name.toLowerCase().includes(q) ||
+          p.brand.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q) ||
+          p.subcategory.toLowerCase().includes(q) ||
+          p.sku.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q)
+        );
+      }
+
+      if (initialCat) {
+        products = products.filter(p => p.category === initialCat);
+      }
+
+      // Brand checkboxes
+      const checkedBrands = Array.from(document.querySelectorAll("input[name='search-brand-cb']:checked")).map(el => el.value);
+      if (checkedBrands.length > 0) {
+        products = products.filter(p => checkedBrands.includes(p.brand));
+      }
+
+      // Price filter
+      const minPrice = parseFloat(document.getElementById("search-min-price").value) || 0;
+      const maxPrice = parseFloat(document.getElementById("search-max-price").value) || Infinity;
+      products = products.filter(p => p.price >= minPrice && p.price <= maxPrice);
+
+      // Rating filter
+      const ratingRadio = document.querySelector("input[name='search-rating']:checked");
+      if (ratingRadio) {
+        const minRating = parseFloat(ratingRadio.value) || 0;
+        if (minRating > 0) {
+          products = products.filter(p => p.rating >= minRating);
+        }
+      }
+
+      // Stock filter
+      if (document.getElementById("search-in-stock")?.checked) {
+        products = products.filter(p => p.stock > 0);
+      }
+
+      // Sort
+      const sortVal = document.getElementById("search-sort-select").value;
+      if (sortVal === "price-asc") {
+        products.sort((a, b) => a.price - b.price);
+      } else if (sortVal === "price-desc") {
+        products.sort((a, b) => b.price - a.price);
+      } else if (sortVal === "rating") {
+        products.sort((a, b) => b.rating - a.rating);
+      } else if (sortVal === "discount") {
+        products.sort((a, b) => {
+          const discA = (a.mrp - a.price) / a.mrp;
+          const discB = (b.mrp - b.price) / b.mrp;
+          return discB - discA;
+        });
+      }
+
+      // Result count
+      document.getElementById("search-count-display").textContent = products.length;
+
+      const grid = document.getElementById("search-products-grid");
+      if (!grid) return;
+
+      if (products.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; padding: 48px; text-align: center; background: #FFFFFF; border-radius: 16px; border: 1px solid #E2E8F0;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" style="margin-bottom: 12px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <h4 style="font-size: 1.1rem; color: #111827; margin-bottom: 6px;">No medical equipment matched "${rawQuery}"</h4>
+            <p style="font-size: 0.85rem; color: #64748B; margin-bottom: 16px;">Try searching for generic terms like "Monitor", "ECG", "Wheelchair", or "Bed".</p>
+            <a href="category.html" class="btn-primary" style="display: inline-flex;">Browse Entire Catalogue</a>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = products.map(p => renderProductCard(p)).join("");
+    }
+
+    function resetSearchFilters() {
+      document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
+      document.getElementById("search-in-stock").checked = true;
+      document.querySelector("input[name='search-rating'][value='0']").checked = true;
+      document.getElementById("search-min-price").value = "";
+      document.getElementById("search-max-price").value = "";
+      runSearch();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Equipment Details - MediKart B2B</title>
+  <meta name="description" content="View specifications, clinical manuals, bulk tier slabs, and verified doctor reviews on MediKart.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header Mount -->
+  <div id="header-mount"></div>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb-container">
+    <div class="container">
+      <ul class="breadcrumb-list">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li class="breadcrumb-item"><a href="category.html" id="pdp-crumb-cat">Equipment</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li class="breadcrumb-item active" id="pdp-crumb-title">Product Details</li>
+      </ul>
+    </div>
+  </div>
+
+  <main class="container" style="padding-bottom: 48px;">
+    <!-- Main Product Detail Box -->
+    <div class="pdp-grid" id="pdp-main-grid">
+      <!-- Left Column: Gallery & Thumbnails -->
+      <div class="pdp-gallery-col">
+        <div class="pdp-main-image-wrap" id="main-image-wrap" onmousemove="handleImageZoom(event)" onmouseleave="resetImageZoom()">
+          <img id="pdp-zoom-img" class="pdp-main-image" src="" alt="Medical Equipment Main View"/>
+        </div>
+        <div class="pdp-thumbnails-row" id="pdp-thumbnails-container">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Institutional Trust Box -->
+        <div style="background: #F8FAF9; border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-top: 12px;">
+          <div style="font-size: 0.82rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            MediKart Certified Hospital Guarantee
+          </div>
+          <ul style="font-size: 0.78rem; color: #475569; display: flex; flex-direction: column; gap: 6px;">
+            <li>✓ 100% Genuine OEM Equipment with Serialized Calibration</li>
+            <li>✓ GST Tax Invoice with complete HSN Breakdown for ITC</li>
+            <li>✓ Direct Bio-Medical Engineer Installation & Demonstration</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Right Column: Product Metadata, Pricing, Bulk Slabs, CTAs -->
+      <div class="pdp-info-col">
+        <div class="pdp-meta-top">
+          <a href="brands.html" class="pdp-brand-tag" id="pdp-brand-link">Brand Name</a>
+          <span class="pdp-sku-badge" id="pdp-sku-display">SKU: MK-000</span>
+          <span style="background: #ECFDF5; color: #065F46; font-size: 0.74rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;">Verified Vendor</span>
+        </div>
+
+        <h1 class="pdp-title" id="pdp-name-heading">Product Title</h1>
+
+        <div class="pdp-rating-strip">
+          <span class="star-rating-pill">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <span id="pdp-rating-value">4.8</span>
+          </span>
+          <span class="rating-count" id="pdp-reviews-count-label">(32 verified facility reviews)</span>
+          <span style="color: #CBD5E1;">•</span>
+          <span style="font-size: 0.8rem; color: #059669; font-weight: 700;" id="pdp-stock-status">In Stock & Ready for Dispatch</span>
+        </div>
+
+        <!-- Price Block -->
+        <div class="pdp-price-box">
+          <div class="pdp-price-row">
+            <span class="pdp-selling-price" id="pdp-price-main">₹0</span>
+            <span class="pdp-mrp" id="pdp-mrp-main">MRP ₹0</span>
+            <span class="pdp-discount-pill" id="pdp-discount-badge">0% OFF</span>
+          </div>
+          <div class="pdp-gst-note">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Price inclusive of 18% GST (Tax invoice generated at checkout)
+          </div>
+        </div>
+
+        <!-- Bulk Quantity Tier Slabs -->
+        <div class="bulk-slabs-box" id="pdp-bulk-slabs-section">
+          <div class="bulk-slabs-header">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            Institutional B2B Volume Pricing Slabs
+          </div>
+          <table class="bulk-slabs-table">
+            <thead>
+              <tr>
+                <th>Tier Volume</th>
+                <th>Extra Savings</th>
+                <th>Effective Unit Price</th>
+              </tr>
+            </thead>
+            <tbody id="pdp-slabs-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pincode Delivery Estimate -->
+        <div class="pincode-check-wrap">
+          <label for="pincode-input-field" style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">Check Express Hospital Delivery</label>
+          <div class="pincode-form">
+            <input type="text" id="pincode-input-field" class="pincode-input" placeholder="Enter 6-digit Pincode" maxlength="6"/>
+            <button class="pincode-btn" onclick="checkPincodeDelivery()">Check</button>
+          </div>
+          <div class="pincode-msg" id="pincode-status-msg"></div>
+        </div>
+
+        <!-- Action Row (Qty Stepper + Add to Cart + Buy Now + Wishlist) -->
+        <div class="pdp-action-row">
+          <div class="qty-stepper">
+            <button class="qty-btn" onclick="stepQty(-1)">-</button>
+            <input type="number" id="pdp-qty-input" class="qty-input" value="1" min="1" max="99" onchange="validateQty()"/>
+            <button class="qty-btn" onclick="stepQty(1)">+</button>
+          </div>
+
+          <button class="btn-pdp-cart" onclick="addToCartCurrentProduct()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            <span>Add to Cart</span>
+          </button>
+
+          <button class="btn-pdp-buy" onclick="buyNowCurrentProduct()">
+            <span>Buy Now</span>
+          </button>
+
+          <button id="pdp-wishlist-heart" class="btn-wishlist" style="position: static; width: 46px; height: 46px;" onclick="toggleCurrentWishlist()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div style="font-size: 0.8rem; color: #64748B;">
+          Need more than 30 units or tender pricing? <a href="bulk-quote.html" style="color: var(--primary); font-weight: 700; text-decoration: underline;">Submit a Bulk RFQ</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs Container: Description | Specifications | Reviews -->
+    <div class="pdp-tabs-container">
+      <div class="pdp-tabs-nav">
+        <button class="pdp-tab-btn active" onclick="switchPdpTab('desc', this)">Clinical Description</button>
+        <button class="pdp-tab-btn" onclick="switchPdpTab('specs', this)">Technical Specifications</button>
+        <button class="pdp-tab-btn" onclick="switchPdpTab('reviews', this)">Doctor & Facility Reviews (<span id="tab-reviews-badge">0</span>)</button>
+      </div>
+
+      <!-- Tab 1: Description -->
+      <div class="pdp-tab-pane active" id="tab-desc">
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 14px;">Product Overview & Clinical Application</h3>
+        <p id="pdp-full-desc" style="font-size: 0.95rem; line-height: 1.7; color: #334155; margin-bottom: 24px;"></p>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 24px;">
+          <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 12px; padding: 18px;">
+            <h5 style="font-weight: 700; color: var(--primary); margin-bottom: 6px;">Safety & Compliance</h5>
+            <p style="font-size: 0.82rem; color: #475569;">Tested in certified clinical labs conforming to international biomedical standards.</p>
+          </div>
+          <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 12px; padding: 18px;">
+            <h5 style="font-weight: 700; color: var(--primary); margin-bottom: 6px;">Hospital Onboarding</h5>
+            <p style="font-size: 0.82rem; color: #475569;">Includes digital user manual, technical schematics, and preventive maintenance guides.</p>
+          </div>
+          <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 12px; padding: 18px;">
+            <h5 style="font-weight: 700; color: var(--primary); margin-bottom: 6px;">Spares & Accessories</h5>
+            <p style="font-size: 0.82rem; color: #475569;">Guaranteed availability of OEM sensors, cables, and replacement parts for 7+ years.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Specifications Table -->
+      <div class="pdp-tab-pane" id="tab-specs">
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 16px;">Technical Datasheet & Parameters</h3>
+        <table class="specs-table" id="pdp-specs-table">
+          <!-- Populated by JS -->
+        </table>
+      </div>
+
+      <!-- Tab 3: Reviews & Write Review Form -->
+      <div class="pdp-tab-pane" id="tab-reviews">
+        <div class="reviews-grid-wrap">
+          <!-- Left: Score Summary + Write Review Form -->
+          <div>
+            <div class="review-summary-box">
+              <div class="review-score-big" id="reviews-avg-rating">4.8</div>
+              <div style="color: #059669; font-weight: 700; font-size: 0.88rem; margin-bottom: 4px;">Verified Biomedical Rating</div>
+              <p style="font-size: 0.78rem; color: #64748B;">Based on verified institutional installations</p>
+            </div>
+
+            <!-- Write Review Form -->
+            <div class="review-form-card">
+              <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px; color: var(--text-main);">Add Medical Review</h4>
+              <form id="write-review-form" onsubmit="handleReviewSubmit(event)">
+                <div class="form-group">
+                  <label class="form-label">Doctor / Officer Name</label>
+                  <input type="text" id="rev-author" class="form-control" required placeholder="e.g. Dr. Ramesh Gupta"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Hospital / Clinic Facility</label>
+                  <input type="text" id="rev-hospital" class="form-control" required placeholder="e.g. Apollo Super Specialty"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Rating</label>
+                  <select id="rev-stars" class="form-control">
+                    <option value="5">5 Stars - Outstanding Performance</option>
+                    <option value="4">4 Stars - Highly Reliable</option>
+                    <option value="3">3 Stars - Satisfactory</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Clinical Feedback</label>
+                  <textarea id="rev-comment" class="form-control" rows="3" required placeholder="Describe clinical reliability, ease of disinfection, accessories quality..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; font-size: 0.88rem;">
+                  Submit Review
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Right: List of Reviews -->
+          <div>
+            <h4 style="font-size: 1.05rem; font-weight: 800; margin-bottom: 18px; color: var(--text-main);">Installed Facility Feedback</h4>
+            <div id="pdp-reviews-list-container">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products Carousel -->
+    <section>
+      <div class="section-head-simple">
+        <div>
+          <h3 class="section-title">Related Equipment & Compatible Modules</h3>
+          <p class="section-subtitle">Frequently procured together by hospital ICU & surgical wards</p>
+        </div>
+      </div>
+      <div class="product-grid-4" id="related-products-grid">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Sticky Mobile Add-to-Cart Bar (Responsive requirement) -->
+  <div id="mobile-sticky-bar" style="position: fixed; bottom: 0; left: 0; right: 0; background: #FFFFFF; border-top: 1px solid var(--border-color); padding: 12px 20px; z-index: 90; display: none; align-items: center; justify-content: space-between; box-shadow: 0 -4px 12px rgba(0,0,0,0.06);">
+    <div>
+      <div id="sticky-bar-price" style="font-size: 1.15rem; font-weight: 800; color: var(--primary);">₹0</div>
+      <div style="font-size: 0.7rem; color: #059669; font-weight: 600;">Incl. 18% GST</div>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn-primary" style="padding: 10px 18px; font-size: 0.85rem;" onclick="addToCartCurrentProduct()">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer Mount -->
+  <div id="footer-mount"></div>
+
+  <!-- Scripts -->
+  <script src="js/products-data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    let currentProduct = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const prodId = urlParams.get("id") || "prod-101";
+
+      currentProduct = Store.getProductById(prodId);
+      if (!currentProduct) {
+        currentProduct = Store.getProducts()[0];
+      }
+
+      renderProductDetail();
+      renderRelatedProducts();
+
+      // Mobile bar visibility
+      if (window.innerWidth <= 768) {
+        const bar = document.getElementById("mobile-sticky-bar");
+        if (bar) bar.style.display = "flex";
+      }
+    });
+
+    function renderProductDetail() {
+      if (!currentProduct) return;
+      const p = currentProduct;
+
+      // Crumb & Titles
+      document.title = `${p.name} - MediKart B2B Healthcare`;
+      document.getElementById("pdp-crumb-title").textContent = p.name.length > 35 ? p.name.substring(0, 35) + '...' : p.name;
+      document.getElementById("pdp-name-heading").textContent = p.name;
+      document.getElementById("pdp-brand-link").textContent = p.brand;
+      document.getElementById("pdp-brand-link").href = `category.html?brand=${encodeURIComponent(p.brand)}`;
+      document.getElementById("pdp-sku-display").textContent = `SKU: ${p.sku}`;
+
+      // Ratings & Stock
+      document.getElementById("pdp-rating-value").textContent = p.rating;
+      document.getElementById("pdp-reviews-count-label").textContent = `(${p.reviewsCount} facility reviews)`;
+      document.getElementById("pdp-stock-status").textContent = p.stock > 0 ? `In Stock (${p.stock} units ready)` : "Made-to-Order";
+
+      // Price
+      const discountPct = Math.round(((p.mrp - p.price) / p.mrp) * 100);
+      document.getElementById("pdp-price-main").textContent = formatINR(p.price);
+      document.getElementById("pdp-mrp-main").textContent = `MRP ${formatINR(p.mrp)}`;
+      document.getElementById("pdp-discount-badge").textContent = `${discountPct}% OFF`;
+      document.getElementById("sticky-bar-price").textContent = formatINR(p.price);
+
+      // Gallery
+      const mainImg = document.getElementById("pdp-zoom-img");
+      mainImg.src = p.images[0];
+      mainImg.alt = p.name;
+
+      const thumbsContainer = document.getElementById("pdp-thumbnails-container");
+      thumbsContainer.innerHTML = p.images.map((img, i) => `
+        <div class="pdp-thumb-item ${i === 0 ? 'active' : ''}" onclick="switchPdpImage('${img}', this)">
+          <img src="${img}" alt="${p.name} view ${i+1}"/>
+        </div>
+      `).join("");
+
+      // Bulk Slabs Table
+      const slabsTbody = document.getElementById("pdp-slabs-tbody");
+      if (p.bulkSlabs && p.bulkSlabs.length > 0) {
+        slabsTbody.innerHTML = p.bulkSlabs.map(slab => {
+          const slabPrice = Math.round(p.price * (1 - slab.discountPct / 100));
+          return `
+            <tr>
+              <td><strong>Buy ${slab.minQty}+ units</strong></td>
+              <td><span style="color: var(--accent); font-weight: 700;">${slab.discountPct}% Extra Off</span></td>
+              <td><strong>${formatINR(slabPrice)}</strong> / unit</td>
+            </tr>
+          `;
+        }).join("");
+      } else {
+        document.getElementById("pdp-bulk-slabs-section").style.display = "none";
+      }
+
+      // Wishlist state
+      updateWishlistHeart();
+
+      // Description & Specs
+      document.getElementById("pdp-full-desc").textContent = p.description;
+      const specsTable = document.getElementById("pdp-specs-table");
+      if (p.specs) {
+        specsTable.innerHTML = Object.entries(p.specs).map(([key, val]) => `
+          <tr>
+            <td>${key}</td>
+            <td><strong>${val}</strong></td>
+          </tr>
+        `).join("");
+      }
+
+      // Reviews
+      renderReviewsTab();
+    }
+
+    function switchPdpImage(src, element) {
+      document.getElementById("pdp-zoom-img").src = src;
+      document.querySelectorAll(".pdp-thumb-item").forEach(item => item.classList.remove("active"));
+      if (element) element.classList.add("active");
+    }
+
+    function handleImageZoom(e) {
+      const img = document.getElementById("pdp-zoom-img");
+      img.style.transform = "scale(1.4)";
+      img.style.transformOrigin = `${e.offsetX}px ${e.offsetY}px`;
+    }
+
+    function resetImageZoom() {
+      const img = document.getElementById("pdp-zoom-img");
+      img.style.transform = "scale(1)";
+      img.style.transformOrigin = "center center";
+    }
+
+    function stepQty(delta) {
+      const input = document.getElementById("pdp-qty-input");
+      let val = parseInt(input.value, 10) || 1;
+      val = Math.max(1, val + delta);
+      input.value = val;
+    }
+
+    function validateQty() {
+      const input = document.getElementById("pdp-qty-input");
+      let val = parseInt(input.value, 10) || 1;
+      if (val < 1) val = 1;
+      input.value = val;
+    }
+
+    function checkPincodeDelivery() {
+      const val = document.getElementById("pincode-input-field").value.trim();
+      const msg = document.getElementById("pincode-status-msg");
+      if (/^\d{6}$/.test(val)) {
+        msg.className = "pincode-msg success";
+        msg.innerHTML = `✓ Delivery guaranteed in <strong>3–5 business days</strong> to pincode ${val} with pre-dispatch biomedical calibration.`;
+      } else {
+        msg.className = "pincode-msg";
+        msg.style.display = "block";
+        msg.style.color = "var(--danger)";
+        msg.textContent = "Please enter a valid 6-digit Indian delivery pincode.";
+      }
+    }
+
+    function updateWishlistHeart() {
+      const heartBtn = document.getElementById("pdp-wishlist-heart");
+      if (!heartBtn || !currentProduct) return;
+      const inWish = Store.isInWishlist(currentProduct.id);
+      heartBtn.classList.toggle("active", inWish);
+      const svg = heartBtn.querySelector("svg");
+      if (svg) svg.setAttribute("fill", inWish ? "#EF4444" : "none");
+    }
+
+    function toggleCurrentWishlist() {
+      if (!currentProduct) return;
+      const added = Store.toggleWishlist(currentProduct.id);
+      updateWishlistHeart();
+      showToast(added ? "Saved to Wishlist" : "Removed from Wishlist", added ? "success" : "warning");
+    }
+
+    function addToCartCurrentProduct() {
+      if (!currentProduct) return;
+      const qty = parseInt(document.getElementById("pdp-qty-input").value, 10) || 1;
+      Store.addToCart(currentProduct.id, qty);
+      showToast(`Added ${qty} unit(s) of "${currentProduct.name.substring(0, 30)}..." to cart`, "success");
+    }
+
+    function buyNowCurrentProduct() {
+      if (!currentProduct) return;
+      const qty = parseInt(document.getElementById("pdp-qty-input").value, 10) || 1;
+      Store.addToCart(currentProduct.id, qty);
+      window.location.href = "checkout.html";
+    }
+
+    // Tabs
+    function switchPdpTab(tabName, btn) {
+      document.querySelectorAll(".pdp-tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".pdp-tab-pane").forEach(p => p.classList.remove("active"));
+
+      btn.classList.add("active");
+      document.getElementById(`tab-${tabName}`).classList.add("active");
+    }
+
+    // Reviews
+    function renderReviewsTab() {
+      if (!currentProduct) return;
+      const reviews = Store.getReviews(currentProduct.id);
+      document.getElementById("tab-reviews-badge").textContent = reviews.length;
+      document.getElementById("reviews-avg-rating").textContent = currentProduct.rating;
+
+      const container = document.getElementById("pdp-reviews-list-container");
+      if (reviews.length === 0) {
+        container.innerHTML = `<p style="color: #64748B; font-size: 0.9rem;">No reviews yet for this product. Be the first healthcare facility to submit feedback.</p>`;
+        return;
+      }
+
+      container.innerHTML = reviews.map(r => `
+        <div class="review-card-item">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+            <div>
+              <strong style="color: var(--text-main); font-size: 0.92rem;">${r.author}</strong>
+              <div style="font-size: 0.76rem; color: #0E5F5B; font-weight: 600;">${r.hospital || 'Verified Facility'}</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <span class="star-rating-pill">${r.rating}★</span>
+              <span style="font-size: 0.74rem; color: #94A3B8;">${r.date}</span>
+            </div>
+          </div>
+          <p style="font-size: 0.88rem; color: #475569; line-height: 1.5;">${r.comment}</p>
+        </div>
+      `).join("");
+    }
+
+    function handleReviewSubmit(e) {
+      e.preventDefault();
+      if (!currentProduct) return;
+
+      const author = document.getElementById("rev-author").value.trim();
+      const hospital = document.getElementById("rev-hospital").value.trim();
+      const rating = parseInt(document.getElementById("rev-stars").value, 10);
+      const comment = document.getElementById("rev-comment").value.trim();
+
+      Store.addReview({
+        productId: currentProduct.id,
+        author,
+        hospital,
+        rating,
+        comment
+      });
+
+      e.target.reset();
+      renderReviewsTab();
+      showToast("Thank you! Your verified review has been published.", "success");
+    }
+
+    // Related Products
+    function renderRelatedProducts() {
+      if (!currentProduct) return;
+      const all = Store.getProducts();
+      const related = all.filter(p => p.id !== currentProduct.id && p.category === currentProduct.category).slice(0, 4);
+
+      const grid = document.getElementById("related-products-grid");
+      if (grid) {
+        grid.innerHTML = related.map(p => renderProductCard(p)).join("");
+      }
+    }
+  </script>
+</body>
+</html>

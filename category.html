@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Equipment Catalogue & Categories - MediKart B2B</title>
+  <meta name="description" content="Browse verified medical devices, ICU equipment, cardiology machines, surgical tools and hospital furniture with volume discounts and 18% GST invoices.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header Mount -->
+  <div id="header-mount"></div>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb-container">
+    <div class="container">
+      <ul class="breadcrumb-list">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li class="breadcrumb-item"><a href="category.html">Medical Equipment</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li class="breadcrumb-item active" id="breadcrumb-current-cat">All Categories</li>
+      </ul>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- Subcategory Tiles Grid -->
+    <div class="subcategory-tiles-grid" id="subcategory-tiles-container">
+      <!-- Injected by JS -->
+    </div>
+
+    <!-- Main Layout: Filters + Product Grid -->
+    <div class="plp-layout">
+      <!-- Filter Sidebar -->
+      <aside class="filter-sidebar">
+        <div class="filter-header">
+          <h3>Filters</h3>
+          <span class="btn-clear-filters" onclick="resetAllFilters()">Reset All</span>
+        </div>
+
+        <!-- Filter: Category -->
+        <div class="filter-group">
+          <div class="filter-group-title">
+            <span>Speciality / Category</span>
+          </div>
+          <div class="filter-options-list" id="filter-categories-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Filter: Brand -->
+        <div class="filter-group">
+          <div class="filter-group-title">
+            <span>Manufacturer / Brand</span>
+          </div>
+          <div class="filter-options-list" id="filter-brands-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Filter: Price Range -->
+        <div class="filter-group">
+          <div class="filter-group-title">
+            <span>Price Range (INR)</span>
+          </div>
+          <div class="price-range-inputs">
+            <input type="number" id="filter-min-price" class="price-input" placeholder="Min ₹" onchange="applyFilters()"/>
+            <span style="color: #94A3B8;">-</span>
+            <input type="number" id="filter-max-price" class="price-input" placeholder="Max ₹" onchange="applyFilters()"/>
+          </div>
+        </div>
+
+        <!-- Filter: Minimum Rating -->
+        <div class="filter-group">
+          <div class="filter-group-title">
+            <span>Customer Rating</span>
+          </div>
+          <div class="filter-options-list">
+            <label class="filter-checkbox-label">
+              <input type="radio" name="filter-rating" value="4.5" onchange="applyFilters()"> 4.5★ & Above
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="radio" name="filter-rating" value="4.0" onchange="applyFilters()"> 4.0★ & Above
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="radio" name="filter-rating" value="0" checked onchange="applyFilters()"> All Ratings
+            </label>
+          </div>
+        </div>
+
+        <!-- Filter: Discount % -->
+        <div class="filter-group">
+          <div class="filter-group-title">
+            <span>Discount Slab</span>
+          </div>
+          <div class="filter-options-list">
+            <label class="filter-checkbox-label">
+              <input type="radio" name="filter-discount" value="25" onchange="applyFilters()"> 25% or More
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="radio" name="filter-discount" value="15" onchange="applyFilters()"> 15% or More
+            </label>
+            <label class="filter-checkbox-label">
+              <input type="radio" name="filter-discount" value="0" checked onchange="applyFilters()"> All Deals
+            </label>
+          </div>
+        </div>
+
+        <!-- Filter: Availability -->
+        <div class="filter-group">
+          <label class="filter-checkbox-label">
+            <input type="checkbox" id="filter-in-stock" checked onchange="applyFilters()"> In-Stock Hospital Ready
+          </label>
+        </div>
+      </aside>
+
+      <!-- Products Grid & Toolbar Area -->
+      <section class="plp-main-content">
+        <!-- Toolbar: Result Count & Sort Options -->
+        <div class="plp-toolbar">
+          <div class="plp-result-count">
+            Showing <strong id="product-count-display">0</strong> verified medical products
+          </div>
+          <div class="plp-sort-wrapper">
+            <label for="sort-select" class="plp-sort-label">Sort By:</label>
+            <select id="sort-select" class="plp-sort-select" onchange="applyFilters()">
+              <option value="popularity">Popularity / Clinical Demand</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="rating">Highest Rated</option>
+              <option value="discount">Biggest Discount %</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="product-grid-3" id="plp-products-grid">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- SEO Link Clouds -->
+        <div class="seo-link-cloud-section">
+          <div class="seo-cloud-title">Discover by Medical Speciality & Equipment Type</div>
+          <div class="seo-pill-cloud">
+            <a href="category.html?cat=critical-care" class="seo-pill">ICU Patient Monitors</a>
+            <a href="category.html?cat=critical-care" class="seo-pill">Syringe Infusion Pumps</a>
+            <a href="category.html?cat=cardiology" class="seo-pill">12-Lead ECG Machines</a>
+            <a href="category.html?cat=cardiology" class="seo-pill">Digital Stethoscopes</a>
+            <a href="category.html?cat=furniture" class="seo-pill">Electric ICU Hospital Beds</a>
+            <a href="category.html?cat=furniture" class="seo-pill">Hydraulic Examination Tables</a>
+            <a href="category.html?cat=surgical" class="seo-pill">Dual-Dome LED Surgical OT Lights</a>
+            <a href="category.html?cat=surgical" class="seo-pill">Class-B Vacuum Autoclaves</a>
+            <a href="category.html?cat=radiology" class="seo-pill">Wireless Handheld Color Ultrasound</a>
+            <a href="category.html?cat=infection-control" class="seo-pill">360° UV-C Disinfection Towers</a>
+            <a href="category.html?cat=mother-child" class="seo-pill">Infant Radiant Warmers</a>
+            <a href="category.html?cat=ortho-rehab" class="seo-pill">Motorized Electric Wheelchairs</a>
+            <a href="category.html?cat=consumables" class="seo-pill">Bulk Nitrile Gloves & N95</a>
+            <a href="category.html?cat=laboratory" class="seo-pill">Clinical High-Speed Centrifuges</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer Mount -->
+  <div id="footer-mount"></div>
+
+  <!-- Scripts -->
+  <script src="js/products-data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    // PLP Logic & URL Parameter Sync
+    let currentSelectedCategory = "";
+    let currentSelectedBrand = "";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Parse Query Params
+      const urlParams = new URLSearchParams(window.location.search);
+      currentSelectedCategory = urlParams.get("cat") || "";
+      currentSelectedBrand = urlParams.get("brand") || "";
+
+      initSubcategoryTiles();
+      initFilterSidebarOptions();
+      applyFilters();
+    });
+
+    // Subcategory Tiles
+    function initSubcategoryTiles() {
+      const container = document.getElementById("subcategory-tiles-container");
+      if (!container) return;
+
+      const categories = Store.getCategories();
+      container.innerHTML = categories.map(c => `
+        <div class="subcategory-tile ${c.id === currentSelectedCategory ? 'active' : ''}" onclick="selectCategoryTile('${c.id}')">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+          <span>${c.name}</span>
+        </div>
+      `).join("");
+    }
+
+    function selectCategoryTile(catId) {
+      if (currentSelectedCategory === catId) {
+        currentSelectedCategory = "";
+      } else {
+        currentSelectedCategory = catId;
+      }
+      initSubcategoryTiles();
+      applyFilters();
+    }
+
+    // Populate Filters
+    function initFilterSidebarOptions() {
+      const catList = document.getElementById("filter-categories-list");
+      const brandList = document.getElementById("filter-brands-list");
+      const categories = Store.getCategories();
+      const brands = Store.getBrands();
+
+      if (catList) {
+        catList.innerHTML = categories.map(c => `
+          <label class="filter-checkbox-label">
+            <input type="checkbox" name="cat-filter" value="${c.id}" ${c.id === currentSelectedCategory ? 'checked' : ''} onchange="onCategoryCheckboxChange()"/>
+            <span>${c.name}</span>
+            <span class="filter-count">(${c.count})</span>
+          </label>
+        `).join("");
+      }
+
+      if (brandList) {
+        brandList.innerHTML = brands.map(b => `
+          <label class="filter-checkbox-label">
+            <input type="checkbox" name="brand-filter" value="${b.name}" ${b.name.toLowerCase() === currentSelectedBrand.toLowerCase() ? 'checked' : ''} onchange="applyFilters()"/>
+            <span>${b.name}</span>
+          </label>
+        `).join("");
+      }
+    }
+
+    function onCategoryCheckboxChange() {
+      const checkedBoxes = Array.from(document.querySelectorAll("input[name='cat-filter']:checked"));
+      if (checkedBoxes.length === 1) {
+        currentSelectedCategory = checkedBoxes[0].value;
+      } else {
+        currentSelectedCategory = "";
+      }
+      initSubcategoryTiles();
+      applyFilters();
+    }
+
+    function applyFilters() {
+      let products = Store.getProducts();
+
+      // Category filter (tile or checkboxes)
+      const checkedCats = Array.from(document.querySelectorAll("input[name='cat-filter']:checked")).map(el => el.value);
+      if (checkedCats.length > 0) {
+        products = products.filter(p => checkedCats.includes(p.category));
+      } else if (currentSelectedCategory) {
+        products = products.filter(p => p.category === currentSelectedCategory);
+      }
+
+      // Brand filter
+      const checkedBrands = Array.from(document.querySelectorAll("input[name='brand-filter']:checked")).map(el => el.value);
+      if (checkedBrands.length > 0) {
+        products = products.filter(p => checkedBrands.includes(p.brand));
+      } else if (currentSelectedBrand) {
+        products = products.filter(p => p.brand.toLowerCase() === currentSelectedBrand.toLowerCase());
+      }
+
+      // Price filter
+      const minPrice = parseFloat(document.getElementById("filter-min-price").value) || 0;
+      const maxPrice = parseFloat(document.getElementById("filter-max-price").value) || Infinity;
+      products = products.filter(p => p.price >= minPrice && p.price <= maxPrice);
+
+      // Rating filter
+      const ratingRadio = document.querySelector("input[name='filter-rating']:checked");
+      if (ratingRadio) {
+        const minRating = parseFloat(ratingRadio.value) || 0;
+        if (minRating > 0) {
+          products = products.filter(p => p.rating >= minRating);
+        }
+      }
+
+      // Discount filter
+      const discountRadio = document.querySelector("input[name='filter-discount']:checked");
+      if (discountRadio) {
+        const minDisc = parseFloat(discountRadio.value) || 0;
+        if (minDisc > 0) {
+          products = products.filter(p => {
+            const disc = Math.round(((p.mrp - p.price) / p.mrp) * 100);
+            return disc >= minDisc;
+          });
+        }
+      }
+
+      // Stock filter
+      const inStockOnly = document.getElementById("filter-in-stock")?.checked;
+      if (inStockOnly) {
+        products = products.filter(p => p.stock > 0);
+      }
+
+      // Sorting
+      const sortVal = document.getElementById("sort-select").value;
+      if (sortVal === "price-asc") {
+        products.sort((a, b) => a.price - b.price);
+      } else if (sortVal === "price-desc") {
+        products.sort((a, b) => b.price - a.price);
+      } else if (sortVal === "rating") {
+        products.sort((a, b) => b.rating - a.rating);
+      } else if (sortVal === "discount") {
+        products.sort((a, b) => {
+          const discA = (a.mrp - a.price) / a.mrp;
+          const discB = (b.mrp - b.price) / b.mrp;
+          return discB - discA;
+        });
+      }
+
+      // Update Breadcrumb & Result count
+      const countEl = document.getElementById("product-count-display");
+      if (countEl) countEl.textContent = products.length;
+
+      const breadcrumbEl = document.getElementById("breadcrumb-current-cat");
+      if (breadcrumbEl) {
+        if (currentSelectedCategory) {
+          const catObj = Store.getCategories().find(c => c.id === currentSelectedCategory);
+          breadcrumbEl.textContent = catObj ? catObj.name : "Category";
+        } else if (currentSelectedBrand) {
+          breadcrumbEl.textContent = currentSelectedBrand;
+        } else {
+          breadcrumbEl.textContent = "All Equipment";
+        }
+      }
+
+      // Render Products
+      const grid = document.getElementById("plp-products-grid");
+      if (!grid) return;
+
+      if (products.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; padding: 48px; text-align: center; background: #FFFFFF; border-radius: 16px; border: 1px solid #E2E8F0;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" style="margin-bottom: 12px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <h4 style="font-size: 1.1rem; color: #111827; margin-bottom: 6px;">No medical equipment matches these filters</h4>
+            <p style="font-size: 0.85rem; color: #64748B; margin-bottom: 16px;">Try adjusting price limits or clearing specific brand filters.</p>
+            <button class="btn-primary" onclick="resetAllFilters()">Clear All Filters</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = products.map(p => renderProductCard(p)).join("");
+    }
+
+    function resetAllFilters() {
+      currentSelectedCategory = "";
+      currentSelectedBrand = "";
+      document.querySelectorAll("input[type='checkbox']").forEach(cb => {
+        if (cb.id === "filter-in-stock") cb.checked = true;
+        else cb.checked = false;
+      });
+      document.querySelectorAll("input[type='radio']").forEach(rb => {
+        if (rb.value === "0") rb.checked = true;
+        else rb.checked = false;
+      });
+      document.getElementById("filter-min-price").value = "";
+      document.getElementById("filter-max-price").value = "";
+      document.getElementById("sort-select").value = "popularity";
+      initSubcategoryTiles();
+      applyFilters();
+    }
+  </script>
+</body>
+</html>

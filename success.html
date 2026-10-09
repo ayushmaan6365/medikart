@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmation & GST Tax Invoice - MediKart B2B</title>
+  <meta name="description" content="Order confirmation and downloadable GST tax invoice for hospital procurement on MediKart.">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printable-invoice, #printable-invoice * {
+        visibility: visible;
+      }
+      #printable-invoice {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+        box-shadow: none;
+        border: none;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Mount -->
+  <div id="header-mount"></div>
+
+  <main class="container" style="padding: 32px 20px 60px;">
+    <!-- Confirmation Banner -->
+    <div class="success-card-main">
+      <div class="success-icon-badge">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+
+      <h1 style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
+        Hospital Procurement Order Placed!
+      </h1>
+      <p style="font-size: 1rem; color: #475569; max-width: 580px; margin: 0 auto 20px; line-height: 1.6;">
+        Thank you for choosing MediKart. Your institutional order <strong id="succ-order-id" style="color: var(--primary);">MK-000000</strong> has been confirmed and routed to our central biomedical calibration depot.
+      </p>
+
+      <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;" class="no-print">
+        <a href="orders.html" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <span>Track Order Status</span>
+        </a>
+        <button class="btn-secondary" style="color: var(--text-main); border-color: var(--border-color); background: #FFFFFF;" onclick="window.print()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          <span>Print / Save Tax Invoice</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Official GST Tax Invoice Document Box -->
+    <div class="tax-invoice-container" id="printable-invoice">
+      <!-- Invoice Header -->
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--primary); padding-bottom: 20px; margin-bottom: 24px;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <div style="background: var(--primary); color: #fff; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800;">
+              +
+            </div>
+            <span style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--primary);">Medi<span style="color: var(--accent);">Kart</span></span>
+          </div>
+          <div style="font-size: 0.82rem; color: #475569; line-height: 1.5;">
+            <strong>MediKart Healthcare Technologies Pvt Ltd</strong><br/>
+            Plot No. 104, Biomedical Supply Zone, Udyog Vihar Phase IV<br/>
+            Gurugram, Haryana - 122015, India<br/>
+            <strong>GSTIN:</strong> 06AAACM9988D1Z9 • <strong>PAN:</strong> AAACM9988D<br/>
+            <strong>State:</strong> 06 - Haryana • <strong>Drug License:</strong> DL-HR-2024-88912
+          </div>
+        </div>
+
+        <div style="text-align: right;">
+          <span style="background: #E6F4F2; color: var(--primary); font-weight: 800; font-size: 0.85rem; padding: 4px 12px; border-radius: 4px; display: inline-block; margin-bottom: 8px;">
+            TAX INVOICE (ORIGINAL FOR RECIPIENT)
+          </span>
+          <div style="font-size: 0.85rem; color: #111827;">
+            <div><strong>Invoice No:</strong> <span id="inv-num" style="font-family: var(--font-mono); font-weight: 700;">INV-MK-000</span></div>
+            <div><strong>Invoice Date:</strong> <span id="inv-date"></span></div>
+            <div><strong>Order Ref:</strong> <span id="inv-order-ref"></span></div>
+            <div><strong>Place of Supply:</strong> <span id="inv-pos">Karnataka (29)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buyer (Billed to) & Consignee (Shipped to) -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; background: #F8FAFC; padding: 16px; border-radius: 8px; border: 1px solid var(--border-light);">
+        <div>
+          <div style="font-size: 0.74rem; font-weight: 700; text-transform: uppercase; color: #64748B; margin-bottom: 4px;">
+            Billed To (Hospital / Purchaser)
+          </div>
+          <h4 id="inv-buyer-hospital" style="font-size: 0.95rem; font-weight: 800; color: #111827; margin-bottom: 4px;">-</h4>
+          <div id="inv-buyer-address" style="font-size: 0.82rem; color: #475569; line-height: 1.4;">-</div>
+          <div style="font-size: 0.82rem; margin-top: 6px;">
+            <strong>Buyer GSTIN:</strong> <span id="inv-buyer-gstin" style="font-family: var(--font-mono); font-weight: 700; color: var(--primary);">-</span>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 0.74rem; font-weight: 700; text-transform: uppercase; color: #64748B; margin-bottom: 4px;">
+            Dispatch Logistics & Calibration Details
+          </div>
+          <div style="font-size: 0.82rem; color: #475569; line-height: 1.5;">
+            <strong>Carrier:</strong> Bluedart MedExpress Temperature Controlled<br/>
+            <strong>Expected Delivery:</strong> 3–5 Business Days<br/>
+            <strong>Payment Mode:</strong> <span id="inv-pay-mode">Corporate Net Banking</span><br/>
+            <strong>Bio-Medical Installation:</strong> Engineer Scheduled Onsite
+          </div>
+        </div>
+      </div>
+
+      <!-- Itemized Table with HSN & Taxes -->
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 0.84rem;">
+        <thead>
+          <tr style="background: var(--primary); color: #FFFFFF;">
+            <th style="padding: 10px; text-align: left;">#</th>
+            <th style="padding: 10px; text-align: left;">Item Description & Specifications</th>
+            <th style="padding: 10px; text-align: center;">HSN Code</th>
+            <th style="padding: 10px; text-align: center;">Qty</th>
+            <th style="padding: 10px; text-align: right;">Unit Rate</th>
+            <th style="padding: 10px; text-align: right;">Taxable Amount</th>
+            <th style="padding: 10px; text-align: right;">GST (18%)</th>
+            <th style="padding: 10px; text-align: right;">Total (INR)</th>
+          </tr>
+        </thead>
+        <tbody id="inv-items-tbody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+
+      <!-- Total Calculations Grid -->
+      <div style="display: flex; justify-content: flex-end; margin-bottom: 24px;">
+        <div style="width: 380px; font-size: 0.86rem;">
+          <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-light);">
+            <span>Total Taxable Base Value:</span>
+            <strong id="inv-taxable-total" class="tabular-nums">₹0</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-light); color: var(--primary);">
+            <span>CGST (9.0%):</span>
+            <strong id="inv-cgst" class="tabular-nums">₹0</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-light); color: var(--primary);">
+            <span>SGST / UTGST (9.0%):</span>
+            <strong id="inv-sgst" class="tabular-nums">₹0</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 10px 0; border-top: 2px solid #111827; font-size: 1.15rem; font-weight: 800; color: #111827;">
+            <span>Grand Total (INR):</span>
+            <strong id="inv-grand-total" class="tabular-nums" style="color: var(--primary);">₹0</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legal Declaration & Signature -->
+      <div style="border-top: 1px solid var(--border-color); padding-top: 18px; display: flex; justify-content: space-between; align-items: flex-end; font-size: 0.78rem; color: #64748B;">
+        <div style="max-width: 60%;">
+          <strong>Declaration:</strong> We declare that this invoice shows the actual price of the medical equipment described and that all particulars are true and correct. Certified for medical device ITC claims under section 16 of CGST Act 2017.
+        </div>
+        <div style="text-align: center;">
+          <div style="color: var(--primary); font-weight: 700; margin-bottom: 24px;">For MEDIKART HEALTHCARE TECHNOLOGIES PVT LTD</div>
+          <div style="border-top: 1px dashed #94A3B8; padding-top: 4px;">Authorized Bio-Medical Signatory</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Mount -->
+  <div id="footer-mount"></div>
+
+  <!-- Scripts -->
+  <script src="js/products-data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get("orderId");
+
+      const orders = Store.getOrders();
+      let order = orders.find(o => o.id === orderId);
+      if (!order && orders.length > 0) {
+        order = orders[0];
+      }
+
+      if (!order) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      renderSuccessInvoice(order);
+    });
+
+    function renderSuccessInvoice(order) {
+      document.getElementById("succ-order-id").textContent = order.id;
+      document.getElementById("inv-num").textContent = `INV-${order.id}`;
+      document.getElementById("inv-date").textContent = order.date;
+      document.getElementById("inv-order-ref").textContent = order.id;
+
+      const addr = order.shippingAddress;
+      document.getElementById("inv-buyer-hospital").textContent = addr.hospital || addr.name || "Purchaser Facility";
+      document.getElementById("inv-buyer-address").textContent = addr.address;
+      document.getElementById("inv-buyer-gstin").textContent = addr.gstin || "URP (Unregistered Practitioner)";
+      document.getElementById("inv-pay-mode").textContent = order.paymentMethod;
+
+      // Items Table
+      const tbody = document.getElementById("inv-items-tbody");
+      tbody.innerHTML = order.items.map((item, idx) => {
+        const itemTaxable = item.price * item.quantity;
+        const itemGst = Math.round(itemTaxable * 0.18);
+        const itemTotal = itemTaxable + itemGst;
+
+        return `
+          <tr style="border-bottom: 1px solid #E2E8F0;">
+            <td style="padding: 10px; text-align: left;">${idx + 1}</td>
+            <td style="padding: 10px; text-align: left;">
+              <strong>${item.name}</strong><br/>
+              <span style="font-size: 0.74rem; color: #64748B;">SKU: ${item.sku} • Brand: ${item.brand || 'OEM Certified'}</span>
+            </td>
+            <td style="padding: 10px; text-align: center; font-family: var(--font-mono);">9018</td>
+            <td style="padding: 10px; text-align: center;"><strong>${item.quantity}</strong></td>
+            <td style="padding: 10px; text-align: right;" class="tabular-nums">${formatINR(item.price)}</td>
+            <td style="padding: 10px; text-align: right;" class="tabular-nums">${formatINR(itemTaxable)}</td>
+            <td style="padding: 10px; text-align: right;" class="tabular-nums">${formatINR(itemGst)}</td>
+            <td style="padding: 10px; text-align: right; font-weight: 700;" class="tabular-nums">${formatINR(itemTotal)}</td>
+          </tr>
+        `;
+      }).join("");
+
+      // Totals
+      const taxable = order.taxableAmount || (order.subtotal - (order.bulkSavings || 0));
+      const gst = order.gst || Math.round(taxable * 0.18);
+      const cgst = order.cgst || Math.round(gst / 2);
+      const sgst = order.sgst || Math.round(gst / 2);
+      const grandTotal = order.total || (taxable + gst);
+
+      document.getElementById("inv-taxable-total").textContent = formatINR(taxable);
+      document.getElementById("inv-cgst").textContent = formatINR(cgst);
+      document.getElementById("inv-sgst").textContent = formatINR(sgst);
+      document.getElementById("inv-grand-total").textContent = formatINR(grandTotal);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Bulk Quote Request (RFQ) - MediKart B2B</title>
+  <meta name="description" content="Submit institutional Request For Quotation (RFQ) for hospital ward setup, bulk ICU monitors, beds, and surgical equipment on MediKart.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header Mount -->
+  <div id="header-mount"></div>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb-container">
+    <div class="container">
+      <ul class="breadcrumb-list">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li class="breadcrumb-item active">Bulk Quote (RFQ)</li>
+      </ul>
+    </div>
+  </div>
+
+  <main class="container" style="padding-bottom: 60px;">
+    <div style="max-width: 840px; margin: 0 auto;">
+      <!-- Page Title & Explanation -->
+      <div style="text-align: center; margin-bottom: 32px;">
+        <span class="demo-pill-badge" style="margin-bottom: 8px;">INSTITUTIONAL TENDER & VOLUME DESK</span>
+        <h1 style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 800; color: var(--text-main); margin-bottom: 10px;">
+          Request a Customized Institutional Quote (RFQ)
+        </h1>
+        <p style="font-size: 0.95rem; color: #64748B; line-height: 1.6;">
+          Equipping a new ICU wing, operating theater, or 50+ bed ward? Submit your required equipment list below. Our senior bio-medical pricing specialists will formulate a tender-compliant proposal with volume pricing within 4 business hours.
+        </p>
+      </div>
+
+      <!-- RFQ Form Card -->
+      <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 36px; box-shadow: var(--shadow-sm);" id="rfq-form-card">
+        <form id="rfq-submission-form" onsubmit="handleRFQSubmit(event)">
+          <!-- Facility Information -->
+          <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"></path><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path><path d="M9 9h1"></path><path d="M9 13h1"></path><path d="M9 17h1"></path><path d="M14 9h1"></path><path d="M14 13h1"></path><path d="M14 17h1"></path></svg>
+            1. Hospital or Facility Details
+          </h3>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Healthcare Facility / Organization Name *</label>
+              <input type="text" id="rfq-hospital" class="form-control" required placeholder="e.g. Manipal Super Specialty Hospital"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Facility Type *</label>
+              <select id="rfq-facility-type" class="form-control" required>
+                <option value="Multi-Specialty Hospital (100+ Beds)">Multi-Specialty Hospital (100+ Beds)</option>
+                <option value="Nursing Home / General Ward (20-50 Beds)">Nursing Home / General Ward (20-50 Beds)</option>
+                <option value="Diagnostic Laboratory & Imaging Center">Diagnostic Laboratory & Imaging Center</option>
+                <option value="Surgical Specialty Clinic">Surgical Specialty Clinic</option>
+                <option value="Government / PSU Medical Tender">Government / PSU Medical Tender</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Procurement Officer / Medical Director Name *</label>
+              <input type="text" id="rfq-contact-person" class="form-control" required placeholder="Dr. S. Chatterjee"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Official Work Email for Quotation PDF *</label>
+              <input type="email" id="rfq-email" class="form-control" required placeholder="purchase@hospital.org"/>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Direct Contact Phone Number *</label>
+              <input type="tel" id="rfq-phone" class="form-control" required placeholder="+91 98301 44556"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Delivery City & State *</label>
+              <input type="text" id="rfq-location" class="form-control" required placeholder="Kolkata, West Bengal"/>
+            </div>
+          </div>
+
+          <!-- Equipment Required Section -->
+          <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin: 24px 0 16px; display: flex; align-items: center; gap: 8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            2. Medical Equipment & Volume Specification
+          </h3>
+
+          <div class="form-group">
+            <label class="form-label">Quick Select from Catalogue (Optional)</label>
+            <select id="rfq-quick-device" class="form-control" onchange="appendSelectedDevice()">
+              <option value="">-- Choose Equipment to Auto-Add to List --</option>
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Items, Models & Estimated Quantities Needed *</label>
+            <textarea id="rfq-items" class="form-control" rows="4" required placeholder="e.g.&#10;1. 10 Units - Apex 12.1 Multi-Parameter ICU Monitors (MK-CC-101)&#10;2. 5 Units - Volumetric Infusion Pumps&#10;3. 8 Units - OmniBed Electric ICU Hospital Beds"></textarea>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Estimated Procurement Budget (INR)</label>
+              <select id="rfq-budget" class="form-control">
+                <option value="₹2,00,000 - ₹5,00,000">₹2,00,000 - ₹5,00,000</option>
+                <option value="₹5,00,000 - ₹15,00,000">₹5,00,000 - ₹15,00,000</option>
+                <option value="₹15,00,000 - ₹50,00,000" selected>₹15,00,000 - ₹50,00,000</option>
+                <option value="Above ₹50,00,000 (Full Ward Expansion)">Above ₹50,00,000 (Full Ward Expansion)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Delivery Timeline Requirement</label>
+              <select id="rfq-timeline" class="form-control">
+                <option value="Urgent (Within 7 Days)">Urgent (Within 7 Days)</option>
+                <option value="Standard (Within 2-3 Weeks)" selected>Standard (Within 2-3 Weeks)</option>
+                <option value="Planned Next Quarter (30-60 Days)">Planned Next Quarter (30-60 Days)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Additional Requirements (Warranty, AMC, Onsite Training, Tender Specs)</label>
+            <textarea id="rfq-notes" class="form-control" rows="2" placeholder="e.g. Require 3 years comprehensive AMC, CE certificates for all monitors, and onsite bio-medical technician training."></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 14px;">
+            <span>Submit Institutional RFQ</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- Confirmation Box (Shown after submit) -->
+      <div id="rfq-success-box" style="display: none; background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 48px 32px; text-align: center; box-shadow: var(--shadow-md);">
+        <div class="success-icon-badge">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <h2 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
+          Bulk Quote Request Submitted!
+        </h2>
+        <p style="font-size: 0.95rem; color: #475569; max-width: 580px; margin: 0 auto 18px; line-height: 1.6;">
+          Your inquiry reference is <strong id="rfq-ref-id" style="color: var(--primary); font-family: var(--font-mono); font-size: 1.15rem;">RFQ-0000</strong>. Our institutional pricing team has received your parameters.
+        </p>
+        <div style="background: #F8FAF9; border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; max-width: 500px; margin: 0 auto 24px; font-size: 0.84rem; text-align: left; color: #334155;">
+          <strong>Next Steps:</strong> An assigned bio-medical sales manager will review your equipment quantities and email you a customized GST quotation PDF with delivery timeline.
+        </div>
+        <div style="display: flex; justify-content: center; gap: 14px;">
+          <a href="category.html" class="btn-primary">Browse Catalogue</a>
+          <a href="orders.html" class="btn-secondary" style="color: var(--text-main); border-color: var(--border-color); background: #FFFFFF;">View Order Tracking</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Mount -->
+  <div id="footer-mount"></div>
+
+  <!-- Scripts -->
+  <script src="js/products-data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      populateDeviceSelector();
+    });
+
+    function populateDeviceSelector() {
+      const select = document.getElementById("rfq-quick-device");
+      if (!select) return;
+
+      const products = Store.getProducts();
+      products.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = `${p.name} (SKU: ${p.sku})`;
+        opt.textContent = `${p.name} [${p.brand}]`;
+        select.appendChild(opt);
+      });
+    }
+
+    function appendSelectedDevice() {
+      const select = document.getElementById("rfq-quick-device");
+      const textarea = document.getElementById("rfq-items");
+      if (select.value) {
+        if (textarea.value.trim()) {
+          textarea.value += `\n• 5 Units - ${select.value}`;
+        } else {
+          textarea.value = `• 5 Units - ${select.value}`;
+        }
+        select.value = "";
+      }
+    }
+
+    function handleRFQSubmit(e) {
+      e.preventDefault();
+
+      const hospital = document.getElementById("rfq-hospital").value.trim();
+      const contactPerson = document.getElementById("rfq-contact-person").value.trim();
+      const email = document.getElementById("rfq-email").value.trim();
+      const phone = document.getElementById("rfq-phone").value.trim();
+      const location = document.getElementById("rfq-location").value.trim();
+      const itemsRequired = document.getElementById("rfq-items").value.trim();
+      const budget = document.getElementById("rfq-budget").value;
+      const timeline = document.getElementById("rfq-timeline").value;
+      const notes = document.getElementById("rfq-notes").value.trim();
+
+      const newRFQ = Store.createRFQ({
+        hospital,
+        contactPerson,
+        email,
+        phone,
+        location,
+        itemsRequired,
+        budget,
+        timeline,
+        notes,
+        estimatedValue: 450000
+      });
+
+      document.getElementById("rfq-form-card").style.display = "none";
+      const successBox = document.getElementById("rfq-success-box");
+      successBox.style.display = "block";
+      document.getElementById("rfq-ref-id").textContent = newRFQ.id;
+
+      showToast(`RFQ ${newRFQ.id} submitted successfully!`, "success");
+    }
+  </script>
+</body>
+</html>

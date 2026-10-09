@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Purchase Cart - MediKart B2B</title>
+  <meta name="description" content="Review hospital procurement line items, apply institutional coupons, and calculate 18% GST tax breakdown on MediKart.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header Mount -->
+  <div id="header-mount"></div>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb-container">
+    <div class="container">
+      <ul class="breadcrumb-list">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li class="breadcrumb-item active">Shopping Cart</li>
+      </ul>
+    </div>
+  </div>
+
+  <main class="container">
+    <h1 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin-bottom: 24px;">
+      Hospital Procurement Cart
+    </h1>
+
+    <div id="cart-content-wrapper">
+      <!-- Will be rendered by JS depending on whether cart has items -->
+    </div>
+  </main>
+
+  <!-- Footer Mount -->
+  <div id="footer-mount"></div>
+
+  <!-- Scripts -->
+  <script src="js/products-data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    let appliedCouponCode = "";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCart();
+    });
+
+    function renderCart() {
+      const container = document.getElementById("cart-content-wrapper");
+      if (!container) return;
+
+      const cart = Store.getCart();
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: 20px; padding: 60px 24px; text-align: center; max-width: 640px; margin: 20px auto;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" style="margin-bottom: 16px;">
+              <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <h3 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
+              Your Procurement Cart is Empty
+            </h3>
+            <p style="font-size: 0.9rem; color: #64748B; margin-bottom: 24px;">
+              No medical equipment or supplies currently added. Explore our certified ICU monitors, ECG systems, and hospital beds.
+            </p>
+            <a href="category.html" class="btn-primary" style="display: inline-flex;">
+              Explore Catalogue
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      const summary = Store.getCartSummary(appliedCouponCode);
+
+      const itemsHtml = cart.map(item => {
+        return `
+          <div class="cart-item-row" id="cart-item-${item.id}">
+            <div class="cart-item-product">
+              <img src="${item.image}" alt="${item.name}" class="cart-item-thumb" onerror="this.src='https://placehold.co/100x100?text=Equipment'"/>
+              <div class="cart-item-details">
+                <a href="product.html?id=${item.id}" style="text-decoration: none;">
+                  <h4>${item.name}</h4>
+                </a>
+                <p>Brand: <strong>${item.brand}</strong> • SKU: ${item.sku}</p>
+                <div style="font-size: 0.75rem; color: #059669; font-weight: 600; margin-top: 2px;">
+                  ✓ In Stock • Hospital Delivery in 3-5 Days
+                </div>
+              </div>
+            </div>
+
+            <div style="font-weight: 700; color: var(--text-main); font-size: 0.95rem;">
+              ${formatINR(item.price)}
+            </div>
+
+            <div>
+              <div class="qty-stepper" style="border-radius: 8px;">
+                <button class="qty-btn" style="height: 34px; width: 30px;" onclick="changeQty('${item.id}', ${item.quantity - 1})">-</button>
+                <input type="number" class="qty-input" style="width: 36px; font-size: 0.88rem;" value="${item.quantity}" onchange="changeQty('${item.id}', this.value)"/>
+                <button class="qty-btn" style="height: 34px; width: 30px;" onclick="changeQty('${item.id}', ${item.quantity + 1})">+</button>
+              </div>
+            </div>
+
+            <div style="font-weight: 800; color: var(--primary); font-size: 1.05rem;">
+              ${formatINR(item.price * item.quantity)}
+            </div>
+
+            <div>
+              <button onclick="removeItem('${item.id}')" title="Remove line item" style="color: #94A3B8; transition: color 0.2s;" onmouseover="this.style.color='#DC2626'" onmouseout="this.style.color='#94A3B8'">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      container.innerHTML = `
+        <div class="cart-layout">
+          <!-- Items List Column -->
+          <div class="cart-items-card">
+            <div class="cart-table-head">
+              <span>Medical Equipment</span>
+              <span>Unit Price</span>
+              <span>Quantity</span>
+              <span>Subtotal</span>
+              <span></span>
+            </div>
+            <div id="cart-rows-container">
+              ${itemsHtml}
+            </div>
+
+            <div style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: gap;">
+              <a href="category.html" class="view-all-link">
+                ← Continue Adding Equipment
+              </a>
+              <button onclick="clearEntireCart()" style="font-size: 0.82rem; color: #DC2626; font-weight: 700;">
+                Clear Entire Cart
+              </button>
+            </div>
+          </div>
+
+          <!-- Order Summary Column -->
+          <div class="cart-summary-card">
+            <h3 style="font-family: var(--font-heading); font-size: 1.2rem; font-weight: 800; color: var(--text-main); margin-bottom: 16px;">
+              Procurement Summary
+            </h3>
+
+            <!-- Coupon Box -->
+            <div style="background: #F8FAF9; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 18px;">
+              <div style="font-size: 0.78rem; font-weight: 700; color: var(--primary); margin-bottom: 6px;">
+                Have an Institutional Coupon?
+              </div>
+              <div class="coupon-input-group">
+                <input type="text" id="coupon-code-input" class="coupon-input" placeholder="e.g. MED10, BULK15" value="${appliedCouponCode}"/>
+                <button class="btn-apply-coupon" onclick="applyCoupon()">Apply</button>
+              </div>
+              <div style="font-size: 0.72rem; color: #64748B;">
+                Try demo codes: <strong style="color: var(--accent);">MED10</strong> (10% off), <strong style="color: var(--accent);">BULK15</strong> (15% above ₹50k)
+              </div>
+            </div>
+
+            <!-- Bill Breakdown -->
+            <div class="bill-row">
+              <span>Total Items</span>
+              <strong>${summary.itemCount} units</strong>
+            </div>
+            <div class="bill-row">
+              <span>Gross Price</span>
+              <span class="tabular-nums">${formatINR(summary.grossSubtotal)}</span>
+            </div>
+            ${summary.bulkSavings > 0 ? `
+              <div class="bill-row" style="color: var(--success); font-weight: 600;">
+                <span>Volume Tier Savings</span>
+                <span class="tabular-nums">- ${formatINR(summary.bulkSavings)}</span>
+              </div>
+            ` : ""}
+            ${summary.couponDiscount > 0 ? `
+              <div class="bill-row" style="color: var(--success); font-weight: 600;">
+                <span>Coupon (${appliedCouponCode.toUpperCase()})</span>
+                <span class="tabular-nums">- ${formatINR(summary.couponDiscount)}</span>
+              </div>
+            ` : ""}
+            <div class="bill-row">
+              <span>Taxable Value</span>
+              <span class="tabular-nums">${formatINR(summary.taxableAmount)}</span>
+            </div>
+            <div class="bill-row" style="color: var(--primary); font-weight: 600;">
+              <span>GST @ 18% (CGST 9% + SGST 9%)</span>
+              <span class="tabular-nums">+ ${formatINR(summary.gst)}</span>
+            </div>
+            <div class="bill-row">
+              <span>Biomedical Shipping & Logistics</span>
+              <span style="color: var(--success); font-weight: 700;">FREE</span>
+            </div>
+
+            <div class="bill-row total">
+              <span>Payable Total</span>
+              <span class="tabular-nums" style="color: var(--primary); font-size: 1.35rem;">${formatINR(summary.total)}</span>
+            </div>
+
+            <div style="font-size: 0.74rem; color: #059669; font-weight: 600; margin-top: 10px; display: flex; align-items: center; gap: 6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Eligible for ₹${summary.gst.toLocaleString('en-IN')} Input Tax Credit (ITC)
+            </div>
+
+            <a href="checkout.html" class="btn-checkout-proceed">
+              <span>Proceed to Checkout</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    function changeQty(productId, newQty) {
+      const q = parseInt(newQty, 10);
+      Store.updateCartQty(productId, q);
+      renderCart();
+    }
+
+    function removeItem(productId) {
+      Store.removeFromCart(productId);
+      showToast("Line item removed from cart", "warning");
+      renderCart();
+    }
+
+    function clearEntireCart() {
+      if (confirm("Are you sure you want to empty your cart?")) {
+        Store.clearCart();
+        renderCart();
+        showToast("Cart cleared", "warning");
+      }
+    }
+
+    function applyCoupon() {
+      const input = document.getElementById("coupon-code-input");
+      const code = input ? input.value.trim() : "";
+      if (!code) {
+        appliedCouponCode = "";
+        renderCart();
+        return;
+      }
+
+      const coupons = Store.getCoupons();
+      const cp = coupons.find(c => c.code.toUpperCase() === code.toUpperCase() && c.active);
+
+      if (!cp) {
+        showToast(`Coupon "${code}" is invalid or expired`, "danger");
+        return;
+      }
+
+      const summary = Store.getCartSummary("");
+      if (summary.netSubtotal < cp.minOrder) {
+        showToast(`Coupon "${code}" requires minimum order of ${formatINR(cp.minOrder)}`, "warning");
+        return;
+      }
+
+      appliedCouponCode = code;
+      renderCart();
+      showToast(`Promo Code "${cp.code}" applied! ${cp.description}`, "success");
+    }
+  </script>
+</body>
+</html>

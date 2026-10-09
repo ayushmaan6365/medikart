@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Equipment Deals & Institutional Clearance - MediKart B2B</title>
+  <meta name="description" content="Save up to 35% on certified hospital equipment, ICU monitors, surgical instruments, and clinical consumables on MediKart.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header Mount -->
+  <div id="header-mount"></div>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb-container">
+    <div class="container">
+      <ul class="breadcrumb-list">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li class="breadcrumb-item active">Deals & Clearance</li>
+      </ul>
+    </div>
+  </div>
+
+  <main class="container" style="padding-bottom: 60px;">
+    <!-- Deal Hero Banner -->
+    <div style="background: linear-gradient(135deg, #1E1B4B 0%, #0E5F5B 50%, #D97706 100%); border-radius: var(--radius-xl); padding: 36px 40px; color: #FFFFFF; margin-bottom: 32px; box-shadow: var(--shadow-md);">
+      <span class="demo-pill-badge" style="background: #F59E0B; margin-bottom: 12px;">CLEARANCE SPOTLIGHT</span>
+      <h1 style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin-bottom: 10px;">
+        Institutional Clearance & Special B2B Discounts
+      </h1>
+      <p style="font-size: 0.95rem; color: #E0E7FF; max-width: 680px; line-height: 1.6;">
+        Special hospital surplus and batch-end discounts directly from certified biomedical manufacturers. All equipment retains full OEM manufacturer warranty and calibration certs.
+      </p>
+    </div>
+
+    <!-- Deals Filter Bar -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-primary" id="btn-deal-all" onclick="filterDeals(0, this)" style="padding: 8px 18px; font-size: 0.82rem;">
+          All Deals
+        </button>
+        <button class="btn-secondary" onclick="filterDeals(20, this)" style="padding: 8px 18px; font-size: 0.82rem; color: var(--text-main); border-color: var(--border-color); background: #FFFFFF;">
+          20% or More OFF
+        </button>
+        <button class="btn-secondary" onclick="filterDeals(25, this)" style="padding: 8px 18px; font-size: 0.82rem; color: var(--text-main); border-color: var(--border-color); background: #FFFFFF;">
+          25% or More OFF
+        </button>
+        <button class="btn-secondary" onclick="filterDeals(30, this)" style="padding: 8px 18px; font-size: 0.82rem; color: var(--text-main); border-color: var(--border-color); background: #FFFFFF;">
+          30% Mega Clearance
+        </button>
+      </div>
+
+      <div style="font-size: 0.85rem; color: #64748B;">
+        Sorted strictly by: <strong style="color: var(--accent);">Highest Discount % First</strong>
+      </div>
+    </div>
+
+    <!-- Deals Products Grid -->
+    <div class="product-grid-4" id="deals-products-grid">
+      <!-- Injected by JS -->
+    </div>
+  </main>
+
+  <!-- Footer Mount -->
+  <div id="footer-mount"></div>
+
+  <!-- Scripts -->
+  <script src="js/products-data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    let currentMinDiscount = 0;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderDeals();
+    });
+
+    function filterDeals(minDisc, btn) {
+      currentMinDiscount = minDisc;
+      document.querySelectorAll("main button").forEach(b => {
+        b.className = "btn-secondary";
+        b.style.color = "var(--text-main)";
+        b.style.borderColor = "var(--border-color)";
+        b.style.background = "#FFFFFF";
+      });
+      if (btn) {
+        btn.className = "btn-primary";
+        btn.style.color = "#FFFFFF";
+        btn.style.background = "var(--accent)";
+      }
+      renderDeals();
+    }
+
+    function renderDeals() {
+      const grid = document.getElementById("deals-products-grid");
+      if (!grid) return;
+
+      const products = Store.getProducts();
+      
+      // Calculate % OFF for all and sort by % OFF descending
+      let dealProducts = products.map(p => {
+        const discountPct = Math.round(((p.mrp - p.price) / p.mrp) * 100);
+        return { ...p, discountPct };
+      });
+
+      // Filter by threshold
+      if (currentMinDiscount > 0) {
+        dealProducts = dealProducts.filter(p => p.discountPct >= currentMinDiscount);
+      } else {
+        // default: only products with at least 15% discount
+        dealProducts = dealProducts.filter(p => p.discountPct >= 15);
+      }
+
+      dealProducts.sort((a, b) => b.discountPct - a.discountPct);
+
+      if (dealProducts.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; padding: 48px; text-align: center; background: #FFFFFF; border-radius: 16px; border: 1px solid #E2E8F0;">
+            <h4>No products found at ${currentMinDiscount}% off</h4>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = dealProducts.map(p => renderProductCard(p)).join("");
+    }
+  </script>
+</body>
+</html>

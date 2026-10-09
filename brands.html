@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authorized Medical Brands Directory - MediKart B2B</title>
+  <meta name="description" content="A-Z directory of authorized medical device manufacturers and OEM brands on MediKart with genuine warranties and GST invoicing.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header Mount -->
+  <div id="header-mount"></div>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb-container">
+    <div class="container">
+      <ul class="breadcrumb-list">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li class="breadcrumb-item active">Brands Directory</li>
+      </ul>
+    </div>
+  </div>
+
+  <main class="container" style="padding-bottom: 60px;">
+    <div style="margin-bottom: 28px;">
+      <h1 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin-bottom: 6px;">
+        Authorized Medical Brands & OEM Directory
+      </h1>
+      <p style="font-size: 0.9rem; color: #64748B;">
+        MediKart partners directly with certified international and domestic biomedical manufacturers ensuring complete warranty coverage.
+      </p>
+    </div>
+
+    <!-- Alphabet Filter Bar -->
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; background: #FFFFFF; border: 1px solid var(--border-color); padding: 12px 18px; border-radius: var(--radius-pill); box-shadow: var(--shadow-xs);" id="az-filter-bar">
+      <!-- Injected by JS -->
+    </div>
+
+    <!-- Brands Grid -->
+    <div class="product-grid-3" id="brands-cards-container">
+      <!-- Injected by JS -->
+    </div>
+  </main>
+
+  <!-- Footer Mount -->
+  <div id="footer-mount"></div>
+
+  <!-- Scripts -->
+  <script src="js/products-data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    let activeLetter = "ALL";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderAlphaFilter();
+      renderBrands();
+    });
+
+    function renderAlphaFilter() {
+      const container = document.getElementById("az-filter-bar");
+      if (!container) return;
+
+      const letters = ["ALL", "A", "B", "C", "M", "N", "O", "P", "S"];
+      container.innerHTML = letters.map(l => `
+        <button 
+          style="padding: 6px 14px; border-radius: var(--radius-pill); font-weight: 700; font-size: 0.82rem; background: ${activeLetter === l ? 'var(--primary)' : 'var(--bg-subtle)'}; color: ${activeLetter === l ? '#FFFFFF' : 'var(--text-main)'}; cursor: pointer;"
+          onclick="filterByLetter('${l}')"
+        >
+          ${l}
+        </button>
+      `).join("");
+    }
+
+    function filterByLetter(letter) {
+      activeLetter = letter;
+      renderAlphaFilter();
+      renderBrands();
+    }
+
+    function renderBrands() {
+      const container = document.getElementById("brands-cards-container");
+      if (!container) return;
+
+      const brands = Store.getBrands();
+      const allProducts = Store.getProducts();
+
+      let filtered = brands;
+      if (activeLetter !== "ALL") {
+        filtered = brands.filter(b => b.name.toUpperCase().startsWith(activeLetter));
+      }
+
+      container.innerHTML = filtered.map(b => {
+        const productCount = allProducts.filter(p => p.brand.toLowerCase() === b.name.toLowerCase()).length;
+
+        return `
+          <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 24px; box-shadow: var(--shadow-xs); transition: transform 0.2s; display: flex; flex-direction: column;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
+              <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem;">
+                ${b.name.substring(0, 2).toUpperCase()}
+              </div>
+              <span style="background: #ECFDF5; color: #065F46; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;">
+                ✓ Authorized OEM
+              </span>
+            </div>
+
+            <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">
+              ${b.name}
+            </h3>
+            <p style="font-size: 0.8rem; color: #64748B; margin-bottom: 16px;">
+              Headquarters: <strong>${b.country}</strong> • Catalogued Devices: <strong>${productCount} items</strong>
+            </p>
+
+            <div style="margin-top: auto;">
+              <a href="category.html?brand=${encodeURIComponent(b.name)}" class="btn-primary" style="width: 100%; justify-content: center; font-size: 0.84rem; padding: 10px;">
+                View All ${b.name} Products (${productCount})
+              </a>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Healthcare Facility Profile & Account - MediKart B2B</title>
+  <meta name="description" content="Manage hospital delivery addresses, verified GSTIN certificates, and procurement credentials on MediKart.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header Mount -->
+  <div id="header-mount"></div>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb-container">
+    <div class="container">
+      <ul class="breadcrumb-list">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li class="breadcrumb-item active">Facility Account</li>
+      </ul>
+    </div>
+  </div>
+
+  <main class="container" style="padding-bottom: 60px;">
+    <!-- Demo Credentials Helper Banner -->
+    <div style="background: #FEF3C7; border: 1.5px solid #F59E0B; border-radius: 14px; padding: 14px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="background: #F59E0B; color: #fff; font-size: 0.75rem; font-weight: 800; padding: 2px 8px; border-radius: 4px;">DEMO CREDENTIALS</span>
+        <span style="font-size: 0.85rem; color: #92400E;">
+          Logged in as verified healthcare practitioner: <strong>Dr. Rajesh K. Nair</strong> (Medicity Hospital, Bengaluru).
+        </span>
+      </div>
+      <div style="font-size: 0.82rem; color: #92400E;">
+        Switch profile below or test order placements without payment gateway.
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 280px 1fr; gap: 32px;" class="plp-layout">
+      <!-- Left: Account Navigation Sidebar -->
+      <aside style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 24px; height: fit-content; box-shadow: var(--shadow-sm);">
+        <div style="text-align: center; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); margin-bottom: 16px;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
+            RN
+          </div>
+          <h3 id="sidebar-user-name" style="font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-bottom: 2px;">
+            Dr. Rajesh K. Nair
+          </h3>
+          <p id="sidebar-user-hosp" style="font-size: 0.78rem; color: #64748B;">
+            Medicity Multispecialty Hospital
+          </p>
+          <span style="display: inline-block; background: #ECFDF5; color: #065F46; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-top: 6px;">
+            ✓ GST Verified Facility
+          </span>
+        </div>
+
+        <nav style="display: flex; flex-direction: column; gap: 6px;">
+          <a href="account.html" style="padding: 10px 14px; border-radius: 8px; background: var(--primary-soft); color: var(--primary); font-weight: 700; font-size: 0.86rem; display: flex; align-items: center; gap: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Facility Profile & GST
+          </a>
+          <a href="orders.html" style="padding: 10px 14px; border-radius: 8px; color: var(--text-main); font-weight: 600; font-size: 0.86rem; display: flex; align-items: center; gap: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            Orders & Tracking
+          </a>
+          <a href="wishlist.html" style="padding: 10px 14px; border-radius: 8px; color: var(--text-main); font-weight: 600; font-size: 0.86rem; display: flex; align-items: center; gap: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            Equipment Wishlist
+          </a>
+          <a href="bulk-quote.html" style="padding: 10px 14px; border-radius: 8px; color: var(--text-main); font-weight: 600; font-size: 0.86rem; display: flex; align-items: center; gap: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            Bulk RFQ Inquiries
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Right: Profile Form & Saved Details -->
+      <div>
+        <div style="background: #FFFFFF; border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 32px; box-shadow: var(--shadow-sm);">
+          <h2 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 20px;">
+            Facility Procurement Profile
+          </h2>
+
+          <form id="profile-update-form" onsubmit="handleProfileSave(event)">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Authorized Signatory / Doctor Name</label>
+                <input type="text" id="prof-name" class="form-control" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Hospital / Healthcare Facility Name</label>
+                <input type="text" id="prof-hospital" class="form-control" required/>
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Official Work Email</label>
+                <input type="email" id="prof-email" class="form-control" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mobile Contact</label>
+                <input type="tel" id="prof-phone" class="form-control" required/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">15-Digit Goods & Services Tax Number (GSTIN)</label>
+              <input type="text" id="prof-gstin" class="form-control" maxlength="15" style="text-transform: uppercase; font-family: var(--font-mono); font-weight: 600;"/>
+              <span style="font-size: 0.74rem; color: #64748B;">Validated with GST System for automatic 18% Input Tax Credit.</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Hospital Street Address</label>
+              <input type="text" id="prof-address" class="form-control" required/>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">City</label>
+                <input type="text" id="prof-city" class="form-control" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">State</label>
+                <input type="text" id="prof-state" class="form-control" required/>
+              </div>
+            </div>
+
+            <div class="form-group" style="max-width: 240px;">
+              <label class="form-label">Pincode</label>
+              <input type="text" id="prof-pincode" class="form-control" maxlength="6" required/>
+            </div>
+
+            <button type="submit" class="btn-primary" style="margin-top: 10px;">
+              Save Profile Changes
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Mount -->
+  <div id="footer-mount"></div>
+
+  <!-- Scripts -->
+  <script src="js/products-data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      loadProfileFields();
+    });
+
+    function loadProfileFields() {
+      const u = Store.getUser();
+      if (!u) return;
+
+      document.getElementById("prof-name").value = u.name || "";
+      document.getElementById("prof-hospital").value = u.hospital || "";
+      document.getElementById("prof-email").value = u.email || "";
+      document.getElementById("prof-phone").value = u.phone || "";
+      document.getElementById("prof-gstin").value = u.gstin || "";
+      document.getElementById("prof-address").value = u.address || "";
+      document.getElementById("prof-city").value = u.city || "";
+      document.getElementById("prof-state").value = u.state || "";
+      document.getElementById("prof-pincode").value = u.pincode || "";
+
+      document.getElementById("sidebar-user-name").textContent = u.name || "Practitioner";
+      document.getElementById("sidebar-user-hosp").textContent = u.hospital || "Medical Facility";
+    }
+
+    function handleProfileSave(e) {
+      e.preventDefault();
+
+      const user = {
+        name: document.getElementById("prof-name").value.trim(),
+        hospital: document.getElementById("prof-hospital").value.trim(),
+        email: document.getElementById("prof-email").value.trim(),
+        phone: document.getElementById("prof-phone").value.trim(),
+        gstin: document.getElementById("prof-gstin").value.trim(),
+        address: document.getElementById("prof-address").value.trim(),
+        city: document.getElementById("prof-city").value.trim(),
+        state: document.getElementById("prof-state").value.trim(),
+        pincode: document.getElementById("prof-pincode").value.trim(),
+        isLoggedIn: true
+      };
+
+      Store.saveUser(user);
+      loadProfileFields();
+      showToast("Facility profile and GSTIN updated successfully!", "success");
+    }
+  </script>
+</body>
+</html>
