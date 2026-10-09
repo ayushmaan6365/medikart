@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Search Medical Equipment - MediKart B2B</title>
   <meta name="description" content="Search verified medical devices, patient monitors, surgical lights, diagnostic equipment and consumables on MediKart.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="favicon.svg">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -37,7 +39,12 @@
       <aside class="filter-sidebar">
         <div class="filter-header">
           <h3>Refine Results</h3>
-          <span class="btn-clear-filters" onclick="resetSearchFilters()">Reset</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="btn-clear-filters" onclick="resetSearchFilters()">Reset</span>
+            <button type="button" class="btn-close-filter-drawer" onclick="closeSearchMobileFilters()" aria-label="Close Filter Drawer">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
         </div>
 
         <!-- Filter: Brand -->
@@ -86,11 +93,28 @@
             <input type="checkbox" id="search-in-stock" checked onchange="runSearch()"> In-Stock Hospital Ready
           </label>
         </div>
+
+        <!-- Mobile Drawer Apply Footer -->
+        <div class="mobile-filter-footer">
+          <button type="button" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px;" onclick="closeSearchMobileFilters()">
+            Show Results (<span id="mobile-search-results-count">0</span>)
+          </button>
+        </div>
       </aside>
 
       <!-- Products Grid & Toolbar Area -->
       <section class="plp-main-content">
         <div class="plp-toolbar">
+          <button type="button" class="btn-mobile-filter" onclick="openSearchMobileFilters()" aria-label="Open Filter Options">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="14" x2="23" y2="14"></line>
+            </svg>
+            <span>Filters</span>
+          </button>
           <div class="plp-result-count">
             Found <strong id="search-count-display">0</strong> matching products
           </div>
@@ -111,6 +135,9 @@
         </div>
       </section>
     </div>
+
+    <!-- Mobile Filter Backdrop -->
+    <div class="filter-backdrop" id="search-filter-backdrop" onclick="closeSearchMobileFilters()"></div>
   </main>
 
   <!-- Footer Mount -->
@@ -190,6 +217,38 @@
         products = products.filter(p => p.stock > 0);
       }
 
+      function calculateRelevanceScore(p, queryStr) {
+        if (!queryStr) return 0;
+        const name = (p.name || "").toLowerCase();
+        const brand = (p.brand || "").toLowerCase();
+        const cat = (p.category || "").toLowerCase();
+        const subcat = (p.subcategory || "").toLowerCase();
+        const sku = (p.sku || "").toLowerCase();
+        const desc = (p.description || "").toLowerCase();
+
+        let score = 0;
+
+        // Exact match or starts-with gets highest priority
+        if (name === queryStr) score += 200;
+        else if (name.startsWith(queryStr)) score += 120;
+        else if (name.includes(queryStr)) score += 80;
+
+        // Word-level matching
+        const words = queryStr.split(/\s+/).filter(Boolean);
+        words.forEach(word => {
+          if (name.includes(word)) score += 45;
+          if (subcat.includes(word)) score += 25;
+          if (sku.includes(word)) score += 30;
+          if (brand.includes(word)) score += 15;
+          if (cat.includes(word)) score += 15;
+          if (desc.includes(word)) score += 5; // Loose description mentions get low weight
+        });
+
+        // Small rating tie-breaker
+        score += (p.rating || 4.5) * 2;
+        return score;
+      }
+
       // Sort
       const sortVal = document.getElementById("search-sort-select").value;
       if (sortVal === "price-asc") {
@@ -197,17 +256,29 @@
       } else if (sortVal === "price-desc") {
         products.sort((a, b) => b.price - a.price);
       } else if (sortVal === "rating") {
-        products.sort((a, b) => b.rating - a.rating);
+        products.sort((a, b) => (b.rating || 0) - (a.rating || 0));
       } else if (sortVal === "discount") {
         products.sort((a, b) => {
           const discA = (a.mrp - a.price) / a.mrp;
           const discB = (b.mrp - b.price) / b.mrp;
           return discB - discA;
         });
+      } else {
+        // "popularity" (Relevance)
+        if (q) {
+          products.sort((a, b) => {
+            const scoreA = calculateRelevanceScore(a, q);
+            const scoreB = calculateRelevanceScore(b, q);
+            if (scoreB !== scoreA) return scoreB - scoreA;
+            return (b.rating || 0) - (a.rating || 0);
+          });
+        }
       }
 
       // Result count
       document.getElementById("search-count-display").textContent = products.length;
+      const mobCount = document.getElementById("mobile-search-results-count");
+      if (mobCount) mobCount.textContent = products.length;
 
       const grid = document.getElementById("search-products-grid");
       if (!grid) return;
@@ -225,6 +296,22 @@
       }
 
       grid.innerHTML = products.map(p => renderProductCard(p)).join("");
+    }
+
+    function openSearchMobileFilters() {
+      const sidebar = document.querySelector(".filter-sidebar");
+      const backdrop = document.getElementById("search-filter-backdrop");
+      if (sidebar) sidebar.classList.add("mobile-open");
+      if (backdrop) backdrop.classList.add("active");
+      document.body.classList.add("modal-open");
+    }
+
+    function closeSearchMobileFilters() {
+      const sidebar = document.querySelector(".filter-sidebar");
+      const backdrop = document.getElementById("search-filter-backdrop");
+      if (sidebar) sidebar.classList.remove("mobile-open");
+      if (backdrop) backdrop.classList.remove("active");
+      document.body.classList.remove("modal-open");
     }
 
     function resetSearchFilters() {

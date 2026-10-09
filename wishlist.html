@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Saved Medical Equipment Wishlist - MediKart B2B</title>
   <meta name="description" content="View and manage shortlisted medical devices, ICU monitors, and surgical equipment on MediKart.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="favicon.svg">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -84,42 +86,56 @@
 
       container.innerHTML = `
         <div class="product-grid-4">
-          ${savedProducts.map(p => `
+          ${savedProducts.map(p => {
+            const discountPct = Math.round(((p.mrp - p.price) / p.mrp) * 100);
+            const safeName = escapeAttr(p.name);
+            const safeBrand = escapeAttr(p.brand);
+            const ratingVal = p.rating || 4.8;
+            const revCount = p.reviewsCount || 24;
+
+            return `
             <div class="product-card" id="wish-card-${p.id}">
               <div class="product-badges">
-                <span class="badge-discount">${Math.round(((p.mrp - p.price) / p.mrp) * 100)}% OFF</span>
+                ${discountPct > 0 ? `<span class="badge-discount">${discountPct}% OFF</span>` : ""}
               </div>
 
               <a href="product.html?id=${p.id}" class="product-thumb-link">
-                <img src="${p.images[0]}" alt="${p.name}" class="product-thumb-img"/>
+                <img src="${p.images[0]}" alt="${safeName}" class="product-thumb-img" loading="lazy" onerror="this.src='https://placehold.co/400x400/e2e8f0/0e5f5b?text=Medical'"/>
               </a>
 
               <div class="product-body">
-                <span class="product-brand">${p.brand}</span>
-                <a href="product.html?id=${p.id}" class="product-title">${p.name}</a>
+                <span class="product-brand">${safeBrand}</span>
+                <a href="product.html?id=${p.id}" class="product-title" title="${safeName}">${p.name}</a>
 
                 <div class="product-rating-row">
-                  <span class="star-rating-pill">${p.rating}★</span>
-                  <span class="rating-count">(${p.reviewsCount})</span>
+                  <span class="star-rating-pill">
+                    <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    ${ratingVal}
+                  </span>
+                  <span class="rating-count">(${revCount} reviews)</span>
                 </div>
 
                 <div class="product-price-block">
                   <span class="price-main">${formatINR(p.price)}</span>
                   <span class="price-mrp">${formatINR(p.mrp)}</span>
-                  <span class="price-gst-tag">Incl. 18% GST</span>
+                  <span class="price-gst-tag">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline; vertical-align:middle; margin-right:2px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Inclusive of 18% GST
+                  </span>
                 </div>
 
                 <div style="display: flex; gap: 8px; margin-top: 10px;">
-                  <button class="btn-add-cart" style="flex: 1;" onclick="moveWishItemToCart('${p.id}')">
+                  <button class="btn-add-cart" style="flex: 1;" onclick="moveWishItemToCart('${p.id}')" aria-label="Move ${safeName} to cart">
                     Move to Cart
                   </button>
-                  <button onclick="removeWishItem('${p.id}')" title="Remove from wishlist" style="color: #94A3B8; padding: 8px; border-radius: 8px;" onmouseover="this.style.color='#DC2626'" onmouseout="this.style.color='#94A3B8'">
+                  <button onclick="removeWishItem('${p.id}')" title="Remove from wishlist" aria-label="Remove ${safeName} from wishlist" style="color: #94A3B8; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); background: #fff; cursor: pointer;" onmouseover="this.style.color='#DC2626'" onmouseout="this.style.color='#94A3B8'">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                   </button>
                 </div>
               </div>
             </div>
-          `).join("")}
+            `;
+          }).join("")}
         </div>
       `;
     }

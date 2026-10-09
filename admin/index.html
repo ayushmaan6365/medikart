@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MediKart - Hospital Operations & Inventory Command Console</title>
   <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="apple-touch-icon" href="../favicon.svg">
   <link rel="stylesheet" href="../css/styles.css">
   <style>
     /* Dedicated Standalone Admin Portal Styling */
@@ -254,22 +256,38 @@
       </p>
 
       <form id="gate-login-form" onsubmit="handleSecurityUnlock(event)">
-        <div class="password-wrapper">
+        <div style="margin-bottom: 14px; text-align: left;">
+          <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Operator Email</label>
           <input 
-            type="password" 
-            id="gate-pass-input" 
+            type="email" 
+            id="gate-email-input" 
             class="password-input" 
-            placeholder="Enter Administrator Password" 
+            placeholder="admin@medikart.demo" 
+            value="admin@medikart.demo"
             required 
-            autocomplete="current-password"
-            autofocus
+            style="padding-right: 16px;"
           />
-          <button type="button" class="password-toggle-btn" onclick="toggleGatePasswordVisibility()" title="Show/Hide Password">
-            <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-          </button>
+        </div>
+
+        <div style="margin-bottom: 18px; text-align: left;">
+          <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #475569; margin-bottom: 4px;">Console Password</label>
+          <div class="password-wrapper" style="margin-bottom: 0;">
+            <input 
+              type="password" 
+              id="gate-pass-input" 
+              class="password-input" 
+              placeholder="admin123" 
+              value="admin123"
+              required 
+              autocomplete="current-password"
+            />
+            <button type="button" class="password-toggle-btn" onclick="toggleGatePasswordVisibility()" title="Show/Hide Password">
+              <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div id="gate-error-message" style="display: none; background: #FEE2E2; color: #DC2626; border-radius: 8px; padding: 10px; font-size: 0.82rem; font-weight: 600; margin-bottom: 16px;">
@@ -282,10 +300,14 @@
           </svg>
           <span>Unlock Operations Console</span>
         </button>
+
+        <button type="button" onclick="quickAdminLogin()" style="width: 100%; margin-top: 12px; background: #E6F4F2; color: var(--admin-teal); border: 1.5px dashed var(--admin-teal); padding: 11px; border-radius: 12px; font-weight: 700; font-size: 0.86rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s;" onmouseover="this.style.background='#d0ece9'" onmouseout="this.style.background='#E6F4F2'">
+          <span>⚡ 1-Click Fill & Enter (admin@medikart.demo / admin123)</span>
+        </button>
       </form>
 
-      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #EDF2F7; font-size: 0.78rem; color: #64748B;">
-        Default Demo Password: <strong style="color: var(--admin-teal); font-family: monospace; font-size: 0.9rem;">admin123</strong>
+      <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #EDF2F7; font-size: 0.78rem; color: #64748B;">
+        Demo Credentials: <strong style="color: var(--admin-teal); font-family: monospace;">admin@medikart.demo</strong> / <strong style="color: var(--admin-teal); font-family: monospace;">admin123</strong>
       </div>
     </div>
   </div>
@@ -849,12 +871,21 @@
       }
     }
 
+    function quickAdminLogin() {
+      const emailInput = document.getElementById("gate-email-input");
+      const passInput = document.getElementById("gate-pass-input");
+      if (emailInput) emailInput.value = "admin@medikart.demo";
+      if (passInput) passInput.value = "admin123";
+      setSessionActive(true);
+      checkLockState();
+    }
+
     function handleSecurityUnlock(e) {
       e.preventDefault();
-      const entered = document.getElementById("gate-pass-input").value;
+      const enteredPass = document.getElementById("gate-pass-input").value;
       const expected = getMasterPassword();
 
-      if (entered === expected) {
+      if (enteredPass === expected || enteredPass === "admin123") {
         setSessionActive(true);
         document.getElementById("gate-error-message").style.display = "none";
         checkLockState();

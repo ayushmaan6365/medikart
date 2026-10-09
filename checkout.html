@@ -5,7 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hospital Checkout & GST Invoicing - MediKart B2B</title>
   <meta name="description" content="Secure hospital checkout with GSTIN invoice generation and demo corporate payment processing on MediKart.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="favicon.svg">
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .form-control.is-invalid {
+      border-color: #EF4444 !important;
+      background-color: #FEF2F2 !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+    }
+    .form-control.is-valid {
+      border-color: #10B981 !important;
+      background-color: #F0FDF4 !important;
+    }
+    .field-error-msg {
+      color: #DC2626;
+      font-size: 0.76rem;
+      font-weight: 600;
+      margin-top: 5px;
+      display: none;
+      align-items: center;
+      gap: 4px;
+    }
+    .field-error-msg.visible {
+      display: flex;
+    }
+  </style>
 </head>
 <body>
 
@@ -33,7 +58,7 @@
     <div class="checkout-grid" id="checkout-main-grid">
       <!-- Left Column: Checkout Forms -->
       <div>
-        <form id="checkout-form" onsubmit="handlePlaceOrder(event)">
+        <form id="checkout-form" novalidate onsubmit="handlePlaceOrder(event)">
           <!-- Step 1: Hospital Facility & Contact Details -->
           <div class="checkout-step-card">
             <h3 class="checkout-step-title">
@@ -44,22 +69,38 @@
             <div class="form-row-2">
               <div class="form-group">
                 <label class="form-label">Contact Person / Doctor Name *</label>
-                <input type="text" id="cust-name" class="form-control" required placeholder="e.g. Dr. Rajesh Nair"/>
+                <input type="text" id="cust-name" class="form-control" placeholder="e.g. Dr. Rajesh Nair"/>
+                <div class="field-error-msg" id="err-cust-name">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  <span>Please enter contact person or doctor name (min 3 characters)</span>
+                </div>
               </div>
               <div class="form-group">
                 <label class="form-label">Hospital / Clinic / Diagnostic Center *</label>
-                <input type="text" id="cust-hospital" class="form-control" required placeholder="e.g. Medicity Multispecialty Hospital"/>
+                <input type="text" id="cust-hospital" class="form-control" placeholder="e.g. Medicity Multispecialty Hospital"/>
+                <div class="field-error-msg" id="err-cust-hospital">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  <span>Please enter hospital or healthcare facility name</span>
+                </div>
               </div>
             </div>
 
             <div class="form-row-2">
               <div class="form-group">
                 <label class="form-label">Work Email for Tax Invoice *</label>
-                <input type="email" id="cust-email" class="form-control" required placeholder="procurement@hospital.com"/>
+                <input type="email" id="cust-email" class="form-control" placeholder="procurement@hospital.com"/>
+                <div class="field-error-msg" id="err-cust-email">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  <span>Please enter a valid work email (e.g. name@hospital.com)</span>
+                </div>
               </div>
               <div class="form-group">
                 <label class="form-label">Mobile Number (Delivery SMS updates) *</label>
-                <input type="tel" id="cust-phone" class="form-control" required placeholder="+91 98450 12345"/>
+                <input type="tel" id="cust-phone" class="form-control" placeholder="+91 98450 12345"/>
+                <div class="field-error-msg" id="err-cust-phone">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  <span>Please enter a valid 10-digit mobile number</span>
+                </div>
               </div>
             </div>
           </div>
@@ -73,17 +114,25 @@
 
             <div class="form-group">
               <label class="form-label">Street Address & Department / Ward Room *</label>
-              <input type="text" id="cust-address" class="form-control" required placeholder="Survey No. 42, Outer Ring Road, Biomedical Stores"/>
+              <input type="text" id="cust-address" class="form-control" placeholder="Survey No. 42, Outer Ring Road, Biomedical Stores"/>
+              <div class="field-error-msg" id="err-cust-address">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <span>Please enter complete street address & department</span>
+              </div>
             </div>
 
             <div class="form-row-2">
               <div class="form-group">
                 <label class="form-label">City *</label>
-                <input type="text" id="cust-city" class="form-control" required placeholder="Bengaluru"/>
+                <input type="text" id="cust-city" class="form-control" placeholder="Bengaluru"/>
+                <div class="field-error-msg" id="err-cust-city">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  <span>Please enter city name</span>
+                </div>
               </div>
               <div class="form-group">
                 <label class="form-label">State *</label>
-                <select id="cust-state" class="form-control" required>
+                <select id="cust-state" class="form-control">
                   <option value="Karnataka">Karnataka</option>
                   <option value="Maharashtra">Maharashtra</option>
                   <option value="Delhi NCR">Delhi NCR</option>
@@ -101,7 +150,11 @@
             <div class="form-row-2">
               <div class="form-group">
                 <label class="form-label">Delivery Pincode *</label>
-                <input type="text" id="cust-pincode" class="form-control" required maxlength="6" placeholder="560103"/>
+                <input type="text" id="cust-pincode" class="form-control" maxlength="6" placeholder="560103"/>
+                <div class="field-error-msg" id="err-cust-pincode">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  <span>Please enter a valid 6-digit Indian delivery pincode</span>
+                </div>
               </div>
               <div class="form-group">
                 <label class="form-label">Order Notes / Unloading Instructions</label>
@@ -125,8 +178,12 @@
                 Your GSTIN will be verified and mapped on the generated B2B tax invoice enabling your hospital or clinic to claim 100% of the 18% GST as Input Tax Credit (ITC).
               </p>
               <div class="form-group" style="margin-bottom: 0;">
-                <label class="form-label">15-Digit Hospital GSTIN</label>
+                <label class="form-label">15-Digit Hospital GSTIN (Optional)</label>
                 <input type="text" id="cust-gstin" class="form-control" placeholder="e.g. 29AABCM1234D1Z2" maxlength="15" style="text-transform: uppercase; font-family: var(--font-mono); font-weight: 600;"/>
+                <div class="field-error-msg" id="err-cust-gstin">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  <span>Please enter a valid 15-character GSTIN (e.g. 29AABCM1234D1Z2)</span>
+                </div>
               </div>
             </div>
           </div>
@@ -246,7 +303,92 @@
 
       prefillUserData();
       renderCheckoutSummary();
+      setupValidation();
     });
+
+    const validationRules = {
+      "cust-name": {
+        validate: (val) => val.trim().length >= 3,
+        errorMsg: "Please enter contact person or doctor name (at least 3 characters)"
+      },
+      "cust-hospital": {
+        validate: (val) => val.trim().length >= 3,
+        errorMsg: "Please enter hospital or healthcare facility name"
+      },
+      "cust-email": {
+        validate: (val) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val.trim()),
+        errorMsg: "Please enter a valid work email (e.g. name@hospital.com)"
+      },
+      "cust-phone": {
+        validate: (val) => {
+          const digits = val.replace(/[\s\-\(\)]/g, "").replace(/^\+?91/, "");
+          return /^[6-9]\d{9}$/.test(digits);
+        },
+        errorMsg: "Please enter a valid 10-digit Indian mobile number (e.g. 9845012345)"
+      },
+      "cust-address": {
+        validate: (val) => val.trim().length >= 5,
+        errorMsg: "Please enter complete street address & department"
+      },
+      "cust-city": {
+        validate: (val) => val.trim().length >= 2,
+        errorMsg: "Please enter city name"
+      },
+      "cust-pincode": {
+        validate: (val) => /^\d{6}$/.test(val.trim()),
+        errorMsg: "Please enter a valid 6-digit Indian delivery pincode (e.g. 560103)"
+      },
+      "cust-gstin": {
+        validate: (val) => {
+          const v = val.trim();
+          if (!v) return true; // optional
+          return /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/i.test(v);
+        },
+        errorMsg: "Please enter a valid 15-character GSTIN (e.g. 29AABCM1234D1Z2)"
+      }
+    };
+
+    function validateField(fieldId) {
+      const input = document.getElementById(fieldId);
+      const errBox = document.getElementById(`err-${fieldId}`);
+      const rule = validationRules[fieldId];
+      if (!input || !rule) return true;
+
+      const isValid = rule.validate(input.value);
+      if (isValid) {
+        input.classList.remove("is-invalid");
+        if (input.value.trim().length > 0) input.classList.add("is-valid");
+        if (errBox) {
+          errBox.classList.remove("visible");
+          errBox.style.display = "none";
+        }
+        return true;
+      } else {
+        input.classList.remove("is-valid");
+        input.classList.add("is-invalid");
+        if (errBox) {
+          const textSpan = errBox.querySelector("span");
+          if (textSpan) textSpan.textContent = rule.errorMsg;
+          errBox.classList.add("visible");
+          errBox.style.display = "flex";
+        }
+        return false;
+      }
+    }
+
+    function setupValidation() {
+      Object.keys(validationRules).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener("blur", () => validateField(id));
+          el.addEventListener("input", () => {
+            if (el.classList.contains("is-invalid")) {
+              validateField(id);
+            }
+          });
+        }
+      });
+    }
 
     function prefillUserData() {
       const u = Store.getUser();
@@ -271,7 +413,7 @@
       miniList.innerHTML = cart.map(item => `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.8rem;">
           <div style="max-width: 65%;">
-            <strong style="color: var(--text-main); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.name}</strong>
+            <strong style="color: var(--text-main); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeAttr(item.name)}</strong>
             <span style="color: #64748B;">Qty: ${item.quantity} × ${formatINR(item.price)}</span>
           </div>
           <span style="font-weight: 700; color: var(--text-main);">${formatINR(item.price * item.quantity)}</span>
@@ -293,6 +435,28 @@
 
     function handlePlaceOrder(e) {
       e.preventDefault();
+
+      let firstInvalid = null;
+      let allValid = true;
+
+      Object.keys(validationRules).forEach(id => {
+        const valid = validateField(id);
+        if (!valid) {
+          allValid = false;
+          if (!firstInvalid) {
+            firstInvalid = document.getElementById(id);
+          }
+        }
+      });
+
+      if (!allValid) {
+        if (firstInvalid) {
+          firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+          firstInvalid.focus();
+        }
+        showToast("Please fill in all required fields marked in red.", "warning");
+        return;
+      }
 
       const name = document.getElementById("cust-name").value.trim();
       const hospital = document.getElementById("cust-hospital").value.trim();

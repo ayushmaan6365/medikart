@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Medical Equipment Catalogue & Categories - MediKart B2B</title>
   <meta name="description" content="Browse verified medical devices, ICU equipment, cardiology machines, surgical tools and hospital furniture with volume discounts and 18% GST invoices.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="favicon.svg">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -218,7 +220,7 @@
       }
       if (sidebar) sidebar.classList.add("mobile-open");
       backdrop.classList.add("active");
-      document.body.style.overflow = "hidden";
+      document.body.classList.add("modal-open");
     }
 
     function closeMobileFilters() {
@@ -226,7 +228,7 @@
       const backdrop = document.getElementById("filter-backdrop");
       if (sidebar) sidebar.classList.remove("mobile-open");
       if (backdrop) backdrop.classList.remove("active");
-      document.body.style.overflow = "";
+      document.body.classList.remove("modal-open");
     }
 
     // Populate Filters

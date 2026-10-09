@@ -122,9 +122,9 @@ function initStore() {
           }
         ],
         subtotal: 104250,
-        discount: 5000,
-        gst: 17865,
-        total: 117115,
+        discount: 0,
+        gst: 18765,
+        total: 123015,
         paymentMethod: "Net Banking (HDFC Corporate)",
         shippingAddress: {
           hospital: "Medicity Multispecialty Hospital",
@@ -153,9 +153,9 @@ function initStore() {
           }
         ],
         subtotal: 54000,
-        discount: 2700,
-        gst: 9234,
-        total: 60534,
+        discount: 0,
+        gst: 9720,
+        total: 63720,
         paymentMethod: "UPI (Corporate)",
         shippingAddress: {
           hospital: "Medicity Multispecialty Hospital",
@@ -171,6 +171,32 @@ function initStore() {
       }
     ];
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(sampleOrders));
+  } else {
+    // Reconcile existing stored demo orders if needed
+    try {
+      const existingOrders = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || "[]");
+      let changed = false;
+      existingOrders.forEach(o => {
+        if (o.id === "MK-782941" && o.total !== 123015) {
+          o.subtotal = 104250;
+          o.discount = 0;
+          o.gst = 18765;
+          o.total = 123015;
+          changed = true;
+        } else if (o.id === "MK-791024" && o.total !== 63720) {
+          o.subtotal = 54000;
+          o.discount = 0;
+          o.gst = 9720;
+          o.total = 63720;
+          changed = true;
+        }
+      });
+      if (changed) {
+        localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(existingOrders));
+      }
+    } catch (e) {
+      console.warn("Order reconciliation skipped:", e);
+    }
   }
 }
 

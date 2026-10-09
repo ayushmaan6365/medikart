@@ -45,6 +45,17 @@ const TRANSLATIONS = {
   }
 };
 
+function escapeAttr(str) {
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+window.escapeAttr = escapeAttr;
+
 function t(key) {
   const lang = Store.getLanguage() || "en";
   return (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) || TRANSLATIONS.en[key] || key;
@@ -155,7 +166,7 @@ function renderHeader() {
               </svg>
             </div>
             <div class="brand-text">
-              <span class="brand-title">Medi<span>Kart</span></span>
+              <span class="brand-title">Medi<span>Kart</span> <span class="header-demo-tag" style="font-size: 0.62rem; background: rgba(14,95,91,0.14); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-weight: 800; vertical-align: middle; margin-left: 4px; border: 1px solid rgba(14,95,91,0.25); letter-spacing: 0.5px;">DEMO</span></span>
               <span class="brand-sub">Healthcare B2B</span>
             </div>
           </a>
@@ -452,11 +463,11 @@ function renderFooter() {
             <h4>Equipment Categories</h4>
             <div class="footer-links">
               <a href="category.html?cat=critical-care">Critical Care & ICU</a>
-              <a href="category.html?cat=cardiology">Cardiology & ECG</a>
+              <a href="category.html?cat=cardiology">Cardiology & Diagnostics</a>
               <a href="category.html?cat=furniture">Hospital Furniture</a>
-              <a href="category.html?cat=surgical">Surgical OT Lights</a>
-              <a href="category.html?cat=radiology">Ultrasound & X-Ray</a>
-              <a href="category.html?cat=laboratory">Pathology & Lab</a>
+              <a href="category.html?cat=surgical">Surgical Instruments & OT</a>
+              <a href="category.html?cat=radiology">Imaging & Radiology</a>
+              <a href="category.html?cat=laboratory">Laboratory Equipment</a>
             </div>
           </div>
 
@@ -492,7 +503,7 @@ function renderFooter() {
             <div class="footer-contact-info">
               <div class="footer-contact-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                <span>Toll-Free: 1800-419-MEDIKART<br>(Mon–Sat: 8 AM to 10 PM)</span>
+                <span>Toll-Free: 1800-419-6334<br>(Mon–Sat: 8 AM to 10 PM)</span>
               </div>
               <div class="footer-contact-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
@@ -508,10 +519,11 @@ function renderFooter() {
 
         <div class="footer-bottom">
           <div>
-            © 2026 MediKart Healthcare Private Limited. All Rights Reserved. Demo Showcase Prototype.
+            © 2026 MediKart Healthcare Private Limited. <strong>Demo project — no real orders are processed.</strong>
           </div>
-          <div>
-            ISO 13485:2016 Certified Medical Logistics • CDSCO Registered Vendor Network
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <span>ISO 13485:2016 Certified Medical Logistics</span>
+            <a href="admin/index.html" class="footer-admin-link" style="color: #94A3B8; text-decoration: underline; font-size: 0.76rem;">Admin Demo Console</a>
           </div>
         </div>
       </div>
@@ -540,24 +552,36 @@ function handleSearchInput(query) {
     const q = query.toLowerCase().trim();
     matches = products.filter(p => 
       p.name.toLowerCase().includes(q) ||
-      p.brand.toLowerCase().includes(q) ||
-      p.category.toLowerCase().includes(q) ||
-      p.sku.toLowerCase().includes(q)
-    ).slice(0, 5);
+      (p.brand && p.brand.toLowerCase().includes(q)) ||
+      (p.category && p.category.toLowerCase().includes(q)) ||
+      (p.sku && p.sku.toLowerCase().includes(q)) ||
+      (p.description && p.description.toLowerCase().includes(q))
+    );
+
+    // Sort suggestions by relevance: name match > category/brand match > description match
+    matches.sort((a, b) => {
+      const aName = a.name.toLowerCase().includes(q);
+      const bName = b.name.toLowerCase().includes(q);
+      if (aName && !bName) return -1;
+      if (!aName && bName) return 1;
+      return (b.rating || 0) - (a.rating || 0);
+    });
+
+    matches = matches.slice(0, 5);
   }
 
   if (matches.length === 0) {
-    container.innerHTML = `<div style="padding: 8px 12px; font-size: 0.82rem; color: #94A3B8;">No medical equipment found matching "${query}"</div>`;
+    container.innerHTML = `<div style="padding: 8px 12px; font-size: 0.82rem; color: #94A3B8;">No medical equipment found matching "${escapeAttr(query)}"</div>`;
     return;
   }
 
   container.innerHTML = matches.map(p => `
     <div class="suggestion-item" onclick="selectSearchItem('${p.id}')">
       <div class="suggestion-item-main">
-        <img src="${p.images[0]}" alt="${p.name}" class="suggestion-item-thumb" onerror="this.src='https://placehold.co/40x40?text=Med'"/>
+        <img src="${p.images[0]}" alt="${escapeAttr(p.name)}" class="suggestion-item-thumb" onerror="this.src='https://placehold.co/400x400/e2e8f0/0e5f5b?text=Medical'"/>
         <div>
-          <div class="suggestion-item-text">${p.name.length > 45 ? p.name.substring(0, 45) + '...' : p.name}</div>
-          <div class="suggestion-item-cat">${p.brand} • ${p.category}</div>
+          <div class="suggestion-item-text">${p.name.length > 45 ? escapeAttr(p.name.substring(0, 45)) + '...' : escapeAttr(p.name)}</div>
+          <div class="suggestion-item-cat">${escapeAttr(p.brand)} • ${escapeAttr(p.category)}</div>
         </div>
       </div>
       <div class="suggestion-item-price">${formatINR(p.price)}</div>
@@ -642,11 +666,11 @@ function toggleMobileNav(open) {
   if (open) {
     drawer.classList.add("open");
     backdrop.classList.add("active");
-    document.body.style.overflow = "hidden";
+    document.body.classList.add("modal-open");
   } else {
     drawer.classList.remove("open");
     backdrop.classList.remove("active");
-    document.body.style.overflow = "";
+    document.body.classList.remove("modal-open");
   }
 }
 
@@ -678,6 +702,10 @@ window.addEventListener("medikart_store_updated", (e) => {
 function renderProductCard(p) {
   const inWishlist = Store.isInWishlist(p.id);
   const discountPct = Math.round(((p.mrp - p.price) / p.mrp) * 100);
+  const ratingVal = p.rating || 4.8;
+  const reviewsCount = p.reviewsCount || 24;
+  const safeName = escapeAttr(p.name);
+  const safeBrand = escapeAttr(p.brand);
 
   return `
     <div class="product-card" id="card-${p.id}">
@@ -689,8 +717,9 @@ function renderProductCard(p) {
       <button 
         class="btn-wishlist ${inWishlist ? 'active' : ''}" 
         onclick="handleWishlistToggle('${p.id}', event)"
-        title="Add to Wishlist"
-        aria-label="Wishlist"
+        title="${inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}"
+        aria-label="${inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}"
+        aria-pressed="${inWishlist ? 'true' : 'false'}"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="${inWishlist ? '#EF4444' : 'none'}" stroke="currentColor" stroke-width="2">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
@@ -700,7 +729,7 @@ function renderProductCard(p) {
       <a href="product.html?id=${p.id}" class="product-thumb-link">
         <img 
           src="${p.images[0]}" 
-          alt="${p.name}" 
+          alt="${safeName}" 
           class="product-thumb-img" 
           loading="lazy" 
           onerror="this.src='https://placehold.co/400x400/e2e8f0/0e5f5b?text=Medical+Equipment'"
@@ -708,17 +737,17 @@ function renderProductCard(p) {
       </a>
 
       <div class="product-body">
-        <a href="brands.html" class="product-brand">${p.brand}</a>
-        <a href="product.html?id=${p.id}" class="product-title" title="${p.name}">
+        <a href="brands.html" class="product-brand">${safeBrand}</a>
+        <a href="product.html?id=${p.id}" class="product-title" title="${safeName}">
           ${p.name}
         </a>
 
         <div class="product-rating-row">
           <span class="star-rating-pill">
             <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-            ${p.rating}
+            ${ratingVal}
           </span>
-          <span class="rating-count">(${p.reviewsCount} reviews)</span>
+          <span class="rating-count">(${reviewsCount} reviews)</span>
         </div>
 
         <div class="product-price-block">
@@ -731,7 +760,7 @@ function renderProductCard(p) {
         </div>
 
         <div class="product-card-actions">
-          <button class="btn-add-cart" onclick="handleCardAddToCart('${p.id}', event)">
+          <button class="btn-add-cart" onclick="handleCardAddToCart('${p.id}', event)" aria-label="Add ${safeName} to cart">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
             <span>${t("addToCart")}</span>
           </button>
@@ -754,6 +783,9 @@ function handleWishlistToggle(productId, event) {
   const btn = event.currentTarget;
   if (btn) {
     btn.classList.toggle("active", added);
+    btn.setAttribute("aria-label", added ? "Remove from wishlist" : "Add to wishlist");
+    btn.setAttribute("aria-pressed", added ? "true" : "false");
+    btn.setAttribute("title", added ? "Remove from Wishlist" : "Add to Wishlist");
     const svg = btn.querySelector("svg");
     if (svg) svg.setAttribute("fill", added ? "#EF4444" : "none");
   }
